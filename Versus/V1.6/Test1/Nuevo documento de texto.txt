@@ -1,0 +1,19 @@
+1MUFASA-
+Grid a 140: buen nivel para malas operaciones, 
+Taichi 1 Minuto, Al parecer va bien.
+MACD 1 minuto, lo mismo.
+Multiplicador 4. 
+2MUFASA-
+TP bajado a 450, buen nivel para señales.
+3MUFASA- 
+Taichi a 5 minutos,
+MACD a 5minutos,
+4MUFASA-
+Taichi a 1 minuto, (Es como mejor va)
+MACD a 15minutos, (Esta por confirmar otras configuraciones)
+Grid a 15, habre muchas operaciones, generalmente en la buena direccion.
+dropdown bajo y ganancias mejoradas.
+Martingale alto, evita perdidas grandes en malas operaciones, y
+grandes ganancias en posiciones cortas. 
+Autotp mejorado. Evita perdidas y cierre rapido en caso de cambio de direccion
+PipsModify a 450.

@@ -1,0 +1,14 @@
+-----------------------------------------------------------
+2/Jun/18 (Semana 2)
+-----------------------------------------------------------
+*Los takeprofit se van actualizando con la creacion de cada operacion
+*Introducido un contador de posiciones en el mercado actual asi se puede saber si la operacion actual es mejor
+que las ya efectuadas anteriormente (Limitando la apertura y mejorando la seguridad).
+* Las operaciones crean un archivo asociado que permite tratar las operaciones de manera individual.
+* resistencias y takesprofits adaptativos en funcion como va el mercado (Restop y resbot), Haciendo que las operaciones
+cierren de manera mas rapida o mas lenta en funcion al mercado.
+---------------------PENDIENTE-----------------------------
+*A veces los valores restop y resbot envian un valor muy alto (Saber el valor)//Solucionado
+causando un cierre immediato de las operaciones de venta.
+*Con la nueva version introduce los archivos txt, causando que las antiguas posiciones abiertas tengan que mantener
+parte del codigo antiguo para poder cerrarlas, cuando no hayan posiciones con comentarios de take profit quitar.

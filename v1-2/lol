@@ -1,0 +1,498 @@
+
+
+for(int cnt2=0;OrderSelect(cnt2,SELECT_BY_POS,MODE_TRADES)==true&&OrderType()==OP_SELL&&OrderSymbol()==Symbol();cnt2=cnt){
+  if (cnt2==0) {
+    /* code */
+  }else{
+
+  }
+}
+
+
+for(int cnt1=0;cnt1<OrdersTotal();cnt1++)
+{
+OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
+if(OrderType()==OP_SELL&&OrderSymbol()==Symbol())
+  {
+string fileNamenuevov1 = cnt1+".txt";
+string fileHandlenuevov1 = FileOpen(fileNamenuevov1,FILE_CSV|FILE_READ | FILE_WRITE);
+          string datanuevov1 = resbot;
+          FileWrite(fileHandlenuevov1,datanuevov1);
+          FileClose(fileHandlenuevov1);
+
+  }
+
+}
+
+
+
+for(int cnt2=0;cnt2<OrdersTotal();cnt2++)
+{
+OrderSelect(cnt2,SELECT_BY_POS,MODE_TRADES);
+
+if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()){
+
+string fileNamenuevoc1 = cnt2+".txt";
+string fileHandlenuevoc1 = FileOpen(fileNamenuevoc1,FILE_CSV|FILE_READ | FILE_WRITE);
+        string datanuevoc1 = resbot;
+        FileWrite(fileHandlenuevoc1,datanuevoc1);
+        FileClose(fileHandlenuevoc1);
+
+
+}
+
+}
+
+155 transacciones en TOTAL
+
+
+
+
+
+
+
+for(int cnt4=0;cnt4<OrdersTotal();cnt4++)
+{
+
+OrderSelect(cnt4,SELECT_BY_POS,MODE_TRADES);
+
+string fileNamecierre4 = cnt4+".txt";
+string fileHandlecierre4 = FileOpen(fileNamecierre4,FILE_CSV|FILE_READ | FILE_WRITE);
+if(fileHandlecierre4==INVALID_HANDLE){
+printf("Handle Invalido, apertura error");
+}else{
+  string cierreposicion4 = FileReadString(fileHandlecierre4); //string archivoventa =
+ FileClose(fileHandlecierre4);
+
+ }
+
+
+
+if(OrderType()==OP_SELL&&OrderSymbol()==Symbol()&&cnt==<OrdersTotal()-1)
+  {
+if(resbot<cierreposicion4)//Si la resistencia bot (takeprofit) es mas pequeño que el anterior resbot no ejecutar.
+  printf("Orden apunto de emitir pero el nuevo takeprofit es muy alto entonces no vale la pena.");
+  }else{
+
+  if(sentimientobandas==2&&sentimientocci==2){
+    if(Bid>Bandaalto3m1&&Bid>Bandaalto3m5&&Bid>Bandaalto2m5&&Bid>Bandaalto1m5){
+    OrderSend(Symbol(),OP_SELL,Lots,Bid,Slippage,0,0,0,MagicNumber,0,Red); //Venta resbot
+   string fileNamev = OrderTicket()+".txt";
+   string fileHandlev = FileOpen(fileNamev,FILE_CSV|FILE_READ | FILE_WRITE);
+   string datav = resbot;
+              FileWrite(fileHandlev,datav);
+              FileClose(fileHandlev);
+
+      //+------------------------------------------------------------------+
+      //   CICLO FOR para nuevo take profit por nueva operacion VENTA
+      //+------------------------------------------------------------------+
+      for(int cnt1=0;cnt1<OrdersTotal();cnt1++)
+      {
+      OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
+      if(OrderType()==OP_SELL&&OrderSymbol()==Symbol())
+        {
+      string fileNamenuevov1 = cnt1+".txt";
+      string fileHandlenuevov1 = FileOpen(fileNamenuevov1,FILE_CSV|FILE_READ | FILE_WRITE);
+                string datanuevov1 = resbot;
+                FileWrite(fileHandlenuevov1,datanuevov1);
+                FileClose(fileHandlenuevov1);
+
+        }
+
+      }
+
+
+        }
+
+  }
+
+  }
+  if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()&&cnt4==<OrdersTotal()-1){
+  if(sentimientobandas==1&&sentimientocci==1){
+    if(Ask<Bandabajo3m1&&Ask<Bandabajo3m5&&Ask<Bandabajo2m5&&Ask<Bandabajo1m5){
+
+    OrderSend(Symbol(),OP_BUY,Lots,Ask,Slippage,0,0,0,MagicNumber,0,Blue); //Compra restop
+    string fileNamec = OrderTicket()+".txt";
+
+    string fileHandlec = FileOpen(fileNamec,FILE_CSV|FILE_READ | FILE_WRITE);
+    string datac = restop;
+
+      FileWrite(fileHandlec,datac);
+      FileClose(fileHandlec);
+
+
+      //+------------------------------------------------------------------+
+      //   CICLO FOR para nuevo take profit por nueva operacion COMPRA
+      //+------------------------------------------------------------------+
+
+      for(int cnt2=0;cnt2<OrdersTotal();cnt2++)
+      {
+      OrderSelect(cnt2,SELECT_BY_POS,MODE_TRADES);
+
+      if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()){
+
+      string fileNamenuevoc1 = cnt2+".txt";
+      string fileHandlenuevoc1 = FileOpen(fileNamenuevoc1,FILE_CSV|FILE_READ | FILE_WRITE);
+              string datanuevoc1 = resbot;
+              FileWrite(fileHandlenuevoc1,datanuevoc1);
+              FileClose(fileHandlenuevoc1);
+
+
+      }
+
+      }
+
+
+
+
+
+    }
+
+  }
+  }
+}
+
+
+------------------------------
+
+
+if(sentimientobandas==2&&sentimientocci==2){
+  if(Bid>Bandaalto3m1&&Bid>Bandaalto3m5&&Bid>Bandaalto2m5&&Bid>Bandaalto1m5){
+  OrderSend(Symbol(),OP_SELL,Lots,Bid,Slippage,0,0,0,MagicNumber,0,Red); //Venta resbot
+ string fileNamev = OrderTicket()+".txt";
+ string fileHandlev = FileOpen(fileNamev,FILE_CSV|FILE_READ | FILE_WRITE);
+ string datav = resbot;
+            FileWrite(fileHandlev,datav);
+            FileClose(fileHandlev);
+
+ string fileNamev = Symbol()+".txt";
+ string fileHandlev = FileOpen(fileNamev,FILE_CSV|FILE_READ | FILE_WRITE);
+ string datav = "1";
+ FileWrite(fileHandlev,datav);
+ FileClose(fileHandlev);
+
+    //+------------------------------------------------------------------+
+    //   CICLO FOR para nuevo take profit por nueva operacion VENTA
+    //+------------------------------------------------------------------+
+    for(int cnt1=0;cnt1<OrdersTotal();cnt1++)
+    {
+    OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
+    if(OrderType()==OP_SELL&&OrderSymbol()==Symbol())
+      {
+    string fileNamenuevov1 = cnt1+".txt";
+    string fileHandlenuevov1 = FileOpen(fileNamenuevov1,FILE_CSV|FILE_READ | FILE_WRITE);
+              string datanuevov1 = resbot;
+              FileWrite(fileHandlenuevov1,datanuevov1);
+              FileClose(fileHandlenuevov1);
+
+      }
+
+    }
+
+
+      }
+
+}
+
+
+
+------------------------------------------------
+
+
+
+
+//APERTURA QUE VA ABAJO
+if(sentimientobandas==2&&sentimientocci==2){
+  if(Bid>Bandaalto3m1&&Bid>Bandaalto3m5&&Bid>Bandaalto2m5&&Bid>Bandaalto1m5){
+  OrderSend(Symbol(),OP_SELL,Lots,Bid,Slippage,0,0,0,MagicNumber,0,Red); //Venta resbot
+ string fileNamev = OrderTicket()+".txt";
+ string fileHandlev = FileOpen(fileNamev,FILE_CSV|FILE_READ | FILE_WRITE);
+ string datav = resbot;
+            FileWrite(fileHandlev,datav);
+            FileClose(fileHandlev);
+
+    //+------------------------------------------------------------------+
+    //   CICLO FOR para nuevo take profit por nueva operacion VENTA
+    //+------------------------------------------------------------------+
+    for(int cnt1=0;cnt1<OrdersTotal();cnt1++)
+    {
+    OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
+    if(OrderType()==OP_SELL&&OrderSymbol()==Symbol())
+      {
+    string fileNamenuevov1 = cnt1+".txt";
+    string fileHandlenuevov1 = FileOpen(fileNamenuevov1,FILE_CSV|FILE_READ | FILE_WRITE);
+              string datanuevov1 = resbot;
+              FileWrite(fileHandlenuevov1,datanuevov1);
+              FileClose(fileHandlenuevov1);
+
+      }
+
+    }
+
+
+      }
+
+}
+//FIN
+
+if(sentimientobandas==1&&sentimientocci==1){
+  if(Ask<Bandabajo3m1&&Ask<Bandabajo3m5&&Ask<Bandabajo2m5&&Ask<Bandabajo1m5){
+
+  OrderSend(Symbol(),OP_BUY,Lots,Ask,Slippage,0,0,0,MagicNumber,0,Blue); //Compra restop
+  string fileNamec = OrderTicket()+".txt";
+
+  string fileHandlec = FileOpen(fileNamec,FILE_CSV|FILE_READ | FILE_WRITE);
+  string datac = restop;
+
+    FileWrite(fileHandlec,datac);
+    FileClose(fileHandlec);
+
+
+    //+------------------------------------------------------------------+
+    //   CICLO FOR para nuevo take profit por nueva operacion COMPRA
+    //+------------------------------------------------------------------+
+
+    for(int cnt2=0;cnt2<OrdersTotal();cnt2++)
+    {
+    OrderSelect(cnt2,SELECT_BY_POS,MODE_TRADES);
+
+    if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()){
+
+    string fileNamenuevoc1 = cnt2+".txt";
+    string fileHandlenuevoc1 = FileOpen(fileNamenuevoc1,FILE_CSV|FILE_READ | FILE_WRITE);
+            string datanuevoc1 = resbot;
+            FileWrite(fileHandlenuevoc1,datanuevoc1);
+            FileClose(fileHandlenuevoc1);
+
+
+    }
+
+    }
+
+
+
+
+
+  }
+
+}
+-----------------------------------------------------
+
+
+if(posicionesabiertas==0){
+
+
+  if(sentimientobandas==2&&sentimientocci==2){
+    if(Bid>Bandaalto3m1&&Bid>Bandaalto3m5&&Bid>Bandaalto2m5&&Bid>Bandaalto1m5){
+    OrderSend(Symbol(),OP_SELL,Lots,Bid,Slippage,0,0,0,MagicNumber,0,Red); //Venta resbot
+   string fileNamev = OrderTicket()+".txt";
+   string fileHandlev = FileOpen(fileNamev,FILE_CSV|FILE_READ | FILE_WRITE);
+   string datav = resbot;
+              FileWrite(fileHandlev,datav);
+              FileClose(fileHandlev);
+
+      //+------------------------------------------------------------------+
+      //   CICLO FOR para nuevo take profit por nueva operacion VENTA
+      //+------------------------------------------------------------------+
+      for(int cnt1=0;cnt1<OrdersTotal();cnt1++)
+      {
+      OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
+      if(OrderType()==OP_SELL&&OrderSymbol()==Symbol())
+        {
+      string fileNamenuevov1 = cnt1+".txt";
+      string fileHandlenuevov1 = FileOpen(fileNamenuevov1,FILE_CSV|FILE_READ | FILE_WRITE);
+                string datanuevov1 = resbot;
+                FileWrite(fileHandlenuevov1,datanuevov1);
+                FileClose(fileHandlenuevov1);
+
+        }
+
+      }
+
+
+        }
+
+  }
+
+
+  if(sentimientobandas==1&&sentimientocci==1){
+    if(Ask<Bandabajo3m1&&Ask<Bandabajo3m5&&Ask<Bandabajo2m5&&Ask<Bandabajo1m5){
+
+    OrderSend(Symbol(),OP_BUY,Lots,Ask,Slippage,0,0,0,MagicNumber,0,Blue); //Compra restop
+    string fileNamec = OrderTicket()+".txt";
+
+    string fileHandlec = FileOpen(fileNamec,FILE_CSV|FILE_READ | FILE_WRITE);
+    string datac = restop;
+
+      FileWrite(fileHandlec,datac);
+      FileClose(fileHandlec);
+
+
+      //+------------------------------------------------------------------+
+      //   CICLO FOR para nuevo take profit por nueva operacion COMPRA
+      //+------------------------------------------------------------------+
+
+      for(int cnt2=0;cnt2<OrdersTotal();cnt2++)
+      {
+      OrderSelect(cnt2,SELECT_BY_POS,MODE_TRADES);
+
+      if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()){
+
+      string fileNamenuevoc1 = cnt2+".txt";
+      string fileHandlenuevoc1 = FileOpen(fileNamenuevoc1,FILE_CSV|FILE_READ | FILE_WRITE);
+              string datanuevoc1 = resbot;
+              FileWrite(fileHandlenuevoc1,datanuevoc1);
+              FileClose(fileHandlenuevoc1);
+
+
+      }
+
+      }
+
+
+
+
+
+    }
+
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+if(sentimientobandas==1&&sentimientocci==1){
+  if(Ask<Bandabajo3m1&&Ask<Bandabajo3m5&&Ask<Bandabajo2m5&&Ask<Bandabajo1m5){
+
+  OrderSend(Symbol(),OP_BUY,Lots,Ask,Slippage,0,0,0,MagicNumber,0,Blue); //Compra restop
+  string fileNamec = OrderTicket()+".txt";
+
+  string fileHandlec = FileOpen(fileNamec,FILE_CSV|FILE_READ | FILE_WRITE);
+  string datac = restop;
+
+    FileWrite(fileHandlec,datac);
+    FileClose(fileHandlec);
+
+
+    //+------------------------------------------------------------------+
+    //   CICLO FOR para nuevo take profit por nueva operacion COMPRA
+    //+------------------------------------------------------------------+
+
+    for(int cnt22=0;cnt22<OrdersTotal();cnt22++)
+    {
+    OrderSelect(cnt22,SELECT_BY_POS,MODE_TRADES);
+
+    if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()){
+
+    string fileNamenuevoc22 = cnt22+".txt";
+    string fileHandlenuevoc22 = FileOpen(fileNamenuevoc22,FILE_CSV|FILE_READ | FILE_WRITE);
+            string datanuevoc22 = resbot;
+            FileWrite(fileHandlenuevoc22,datanuevoc22);
+            FileClose(fileHandlenuevoc22);
+
+
+    }
+
+    }
+
+
+
+
+
+  }
+
+}// Sentimiento compra
+
+  if(sentimientobandas==2&&sentimientocci==2){
+    if(Bid>Bandaalto3m1&&Bid>Bandaalto3m5&&Bid>Bandaalto2m5&&Bid>Bandaalto1m5){
+    OrderSend(Symbol(),OP_SELL,Lots,Bid,Slippage,0,0,0,MagicNumber,0,Red); //Venta resbot
+   string fileNamev = OrderTicket()+".txt";
+   string fileHandlev = FileOpen(fileNamev,FILE_CSV|FILE_READ | FILE_WRITE);
+   string datav = resbot;
+              FileWrite(fileHandlev,datav);
+              FileClose(fileHandlev);
+
+      //+------------------------------------------------------------------+
+      //   CICLO FOR para nuevo take profit por nueva operacion VENTA
+      //+------------------------------------------------------------------+
+      for(int cnt11=0;cnt11<OrdersTotal();cnt11++)
+      {
+      OrderSelect(cnt11,SELECT_BY_POS,MODE_TRADES);
+      if(OrderType()==OP_SELL&&OrderSymbol()==Symbol())
+        {
+      string fileNamenuevov11 = cnt1+".txt";
+      string fileHandlenuevov11 = FileOpen(fileNamenuevov11,FILE_CSV|FILE_READ | FILE_WRITE);
+                string datanuevov11 = resbot;
+                FileWrite(fileHandlenuevov11,datanuevov11);
+                FileClose(fileHandlenuevov11);
+
+        }
+
+      }
+
+
+        }
+
+  }
+  //FIN
+
+minuto 5 200/100/50
+minuto 1 200/100/50
+
+Bid > iBands(Symbol(),1,100,2.0,0,PRICE_MEDIAN,1,0);
+Bid > iBands(Symbol(),5,50,2.0,0,PRICE_MEDIAN,1,0)
+Bid > iBands(Symbol(),5,10,2.0,0,PRICE_MEDIAN,1,0)
+Bid > iBands(Symbol(),5,100,2.0,0,PRICE_MEDIAN,1,0)
+
+int periodo1m1 = 600;
+int periodo2m1 = 300;
+int periodo3m1 = 100; //abrir operaciones a corto plazo
+
+int periodo1m5 = 100;//
+int periodo2m5 = 10;//
+int periodo3m5 = 50;//
+
+  Bid>Bandaalto3m1&&
+  Bid>Bandaalto3m5&&
+  Bid>Bandaalto2m5&&
+  Bid>Bandaalto1m5
+
+
+  double Bandaalto1m1 = iBands(Symbol(),1,periodo1m1,2.0,0,PRICE_MEDIAN,1,0);
+  double Bandaalto2m1 = iBands(Symbol(),1,periodo2m1,2.0,0,PRICE_MEDIAN,1,0);
+  double Bandaalto3m1 = iBands(Symbol(),1,periodo3m1,2.0,0,PRICE_MEDIAN,1,0);
+
+  double Bandaalto1m5 = iBands(Symbol(),5,periodo1m5,2.0,0,PRICE_MEDIAN,1,0);
+  double Bandaalto2m5 = iBands(Symbol(),5,periodo2m5,2.0,0,PRICE_MEDIAN,1,0);
+  double Bandaalto3m5 = iBands(Symbol(),5,periodo3m5,2.0,0,PRICE_MEDIAN,1,0);
+
+------------------------
+
+
+
+    OrderSend(Symbol(),OP_SELLLIMIT,Lots,ventaoperacion,Slippage,0,0,0,MagicNumber,0,Red); //Venta resbot
+   string fileNamev = OrderTicket()+".txt";
+   string fileHandlev = FileOpen(fileNamev,FILE_CSV|FILE_READ | FILE_WRITE);
+   string datav = resbot;
+              FileWrite(fileHandlev,datav);
+              FileClose(fileHandlev);
+
+
+              OrderSend(Symbol(),OP_BUYLIMIT,Lots,compraoperacion,Slippage,0,0,0,MagicNumber,0,Blue); //Compra restop
+              string fileNamec = OrderTicket()+".txt";
+
+              string fileHandlec = FileOpen(fileNamec,FILE_CSV|FILE_READ | FILE_WRITE);
+              string datac = restop;
+
+                FileWrite(fileHandlec,datac);
+                FileClose(fileHandlec);
