@@ -348,8 +348,17 @@ ObjectSetText(Symbol()+2,"PipsC: "+DiffPipsc+" PipsV: "+DiffPipsv,7,NULL,Orange)
 
 
      //------------------------------------------------------------------
-     // FILTROS E INDICADORES
+     // SISTEMAS
      //------------------------------------------------------------------
+
+
+// Aquí van a ir los sistemas, con sus condicionales y todo para que funcionen a traves de indicadores
+// externos. existe una variable comentario, que es el ID del sistema utilizado, mas abajo existe el triger
+// de envio de operacion, donde se envia la operación y se crea el archivo con el sistema utilizado.
+
+
+
+
 double priceima = iMA(Symbol(),PERIOD_M1,1,0,MODE_EMA,PRICE_MEDIAN,0);
 double PRcogB=0;
 double PRcogS=0;
@@ -615,6 +624,12 @@ if(tr23C!=EMPTY_VALUE){
 }else{
   printf("Nada");
 }
+
+
+
+// Este apartado se descontinua porque estará espicificado arriba en el sistema la cantidad de probabilidad
+// con la que cada sistema trabaje, y luego se hara una post auditoria para verificar los sistemas
+
  //------------------------------------------------------------------
  // PROBABILIDAD
  //------------------------------------------------------------------
@@ -713,9 +728,30 @@ if(probabilidadC2<probabilidadV2){
    ObjectSet(Symbol()+"PR",OBJPROP_CORNER,0);
    ObjectSet(Symbol()+"PR",OBJPROP_XDISTANCE,15);
    ObjectSet(Symbol()+"PR",OBJPROP_YDISTANCE,130);
+
+
+
+
 //------------------------------------------------------------------
-// CONTADOR POSICIONES ABIERTAS POR ROBOT Y CIERRE
+// RIESGO - CIERRE - BEHAVIOUR
 //------------------------------------------------------------------
+
+// Primero se cataloga una operacion como riesgosa o no, en funcion a parametros como, tiempo, inversion,
+// probabilidad segun sistemas y demas se da una nota de riesgo.
+//
+// Si el riesgo es bajo, se sigue el sistema independiente si gana o pierde.
+//
+// Si el riesgo es alto. se cierra siguiendo el sistema ganador. (Se penaliza solo el sistema de apertura)
+//
+// Este apartado es riesgo, y luego sigue el cierre de operaciones.
+//
+// Cuando se cierra una operacion se crea un archivo con el nombre del sistema de apertura y
+// dentro de ese archivo se añade el tiquet, e informacion importante de la operacion (el cierre, rentabilidad,
+//   etc.).
+// A traves de la información almacenada se sacara datos de comportamiento de cada sistema mediante un for
+// y un exist file.
+
+
 
 double LastOrderlotsv = 0;
 double LastOrderlotsc = 0;
@@ -1047,6 +1083,15 @@ if(posicionesabiertasrobotc>=lotofpos){
 //------------------------------------------------------------------
 // GESTION LOTES
 //------------------------------------------------------------------
+// Esto se vera influenciado por el BEHAVIOUR siguiendo varias probabilidades, riesgo
+// (mayor riesgo mas pequeña inversion), SIN MARTINGALE. Rentabilidad en tiempo, Inversion realizada,
+// en funciona a las probabilidades de perdidas se observa un capital optimo. y riesgo de default que
+// ayudara a definir el capital medio, minimo y maximo de inversion recomendado.
+
+
+
+
+
 double lotesposicionc=0;
 double lotesposicionv=0;
 
@@ -1115,6 +1160,14 @@ ObjectSet(Symbol()+"lotesop",OBJPROP_YDISTANCE,100);
     //------------------------------------------------------------------
     // ENVIO OPERACIONES
     //------------------------------------------------------------------
+
+// Si el triger de sistema es enviado, se coteja con riesgo minimo,
+// se envia operacion y se crea un archivo con nombre de ticket. con informacion importante de envio, por el momento
+// se pone el sistema de entrada.
+//
+// De momento pondremos en el comentario el sistema para facilitar la programación.
+
+
 string FordersendV=Symbol()+"OrdsV";
 string FordersendC=Symbol()+"OrdsC";
 
