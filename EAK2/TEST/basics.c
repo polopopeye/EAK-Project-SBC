@@ -1,5 +1,5 @@
 //+------------------------Kenneth Suarez-------------------------------+
-//                   Expert Advisor MUFASA V1.5- 2014-2018
+//                   Expert Advisor MUFASA V1.5- 2014-2019
 //+---------------------------------------------------------------------+
 
 //  double Extrapolatorgoodop=1.45;
@@ -749,7 +749,7 @@ if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
 
 
 
-if(FileIsExist("S1.txt")){
+if(FileIsExist("S1.txt")){ //aqui se va a sacar solo el archivo info de la operacion en especial.
   RiskBehavior=1;
   //aqui tiene que dar info del archivo.
   //RIESGO NOTA
@@ -758,11 +758,29 @@ if(FileIsExist("S1.txt")){
     //RiesgoTiempo=RAIZCUADRADA((RiesgoInicial/Tiempomedioporoperacion)*(SegundosElapsed-Tiempomedioporoperacion))
     //RiesgoTiempo+RiesgoInicial=RiesgoTiempoCompleto;
     //El riesgo inicial viene indicado al porcentaje de victorias y rentibilidad esperada por operacion.
-    //Si no hay estos datos
+    //Si no hay estos datos no es posible catalogar operacion
   }
+
 
 }else{
   RiskBehavior=1;
+}
+
+//--------------------------------------------------------
+
+if(RiskBehavior<50){//Riesgo controlado, cierre normal.
+  //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
+}else{
+  //Riesgo alto,
+  if(OrderProfit()>0){
+    //Riesgo alto pero hay beneficios. Se sigue con la estrategia. Cierre normal
+    //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
+
+  }else{
+    //Se cierra siguiendo Cierre normal o cierre de la estrategia 1ra.
+    //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
+
+  }
 }
 
 
@@ -923,59 +941,23 @@ trashopV=profitordersV/posicionesabiertasrobotv;
 }//Fin cierre for
 
 
-if(LastOrderlotsc>=maxlotsG){//posicionesabiertasrobotv>=lotofpos
-vctV=true;
-}
-// else{
-// vctV=false;
-// }
-if(LastOrderlotsv>=maxlotsG){//&&posicionesabiertasrobotc>=lotofpos
-vctC=true;
-}
-// else{
-// vctC=false;
-// }
-//printf("C:"+vctC+"V"+vctV);
-
-if(vctC==true){
-  for(int cnt12=0;cnt12<OrdersTotal();cnt12++){
-  OrderSelect(cnt12,SELECT_BY_POS,MODE_TRADES);
-  if(OrderSymbol()==Symbol()&&OrderComment()==commentID&&OrderType()==OP_BUY){
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Orange);
-   }
-  }
-}
-if(vctV==true){
-  for(int cnt13=0;cnt13<OrdersTotal();cnt13++){
-  OrderSelect(cnt13,SELECT_BY_POS,MODE_TRADES);
-  if(OrderSymbol()==Symbol()&&OrderComment()==commentID&&OrderType()==OP_SELL){
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Orange);
-   }
-  }
-}
 
 
 
+//-----------------------------------------------------------
+//
+// Se acceden a los archivos de cada sistema, se verifica si hay mas de x operaciones
+// si hay mas, se elimina del archivo la op 1. con un search and replace.
+//
+//-----------------------------------------------------------
 
-double CSelectivoV=cierrecloseV;
-double CSelectivoC=cierrecloseC;
-double fincierreV=posicionesabiertasrobotv;
-double fincierreC=posicionesabiertasrobotc;
 
-
-  if(CSelectivoC>=fincierreC){
-  FileDelete(FcierreC);
-  }
-
-  if(CSelectivoV>=fincierreV){
-    FileDelete(FcierreV);
-  }
 
 
 //------------------------------------------------------------------
 //GRID 2 POSITIONALOTOFORDERS - POSITION A LOT OF ORDERS
 //------------------------------------------------------------------
-
+//esto esta bien, no permitir operaciones mas malas.
   if(filternegativeopenorders==true){
     if(DiffPipsv>gridpositionV){
      filter1v=1;
@@ -1025,20 +1007,11 @@ ObjectSetText(Symbol()+"filter1","filter1c: ["+filter1c+"]   filter1v:["+filter1
 //------------------------------------------------------------------
 // CRASH
 //------------------------------------------------------------------
-if(posicionesabiertasrobotc>0){
-
-}
 double multiplicadorC,multiplicadorV; //Martingale factor to recover bad choices
-if(posicionesabiertasrobotc>3){
 multiplicadorC=1.5;
-}else{
-multiplicadorC=1.5;
-}
-if(posicionesabiertasrobotv>3){
-  multiplicadorV=1.5;
-}else{
-  multiplicadorV=1.5;
-}
+multiplicadorV=1.5;
+
+
 
 double riskextrapolatorcCrash=riskextrapolatorc;
 double riskextrapolatorvCrash=riskextrapolatorv;
@@ -1050,14 +1023,6 @@ double liquidmulti1=posicionesabiertasrobotc+posicionesabiertasrobotv;
 //double liquidmulti=liquidmulti1*3;
 
 
-if(posicionesabiertasrobotv>=lotofpos){
-
-    //riskextrapolatorcCrash=riskextrapolatorc*25;//liquidmulti
-
-}
-if(posicionesabiertasrobotc>=lotofpos){
-    //riskextrapolatorvCrash=riskextrapolatorc*25;//liquidmulti
-}
 
 
 //------------------------------------------------------------------
@@ -1068,12 +1033,21 @@ if(posicionesabiertasrobotc>=lotofpos){
 // en funciona a las probabilidades de perdidas se observa un capital optimo. y riesgo de default que
 // ayudara a definir el capital medio, minimo y maximo de inversion recomendado.
 
-
-
-
-
 double lotesposicionc=0;
 double lotesposicionv=0;
+
+if(gestionlotesmethod==4){
+//Se obeserva el BEHAVIOR y segun el riesgo, probabilidad, rentabilidad del sistema, lotes inicial,
+//Existe lotes maximo conforme a un porcentaje del capital maximo para invertir. Segundo lotes minimo.
+//en funcion a lo permitido, para poder hacer mas estadisticas.
+
+
+}
+
+
+
+
+
 
 if(gestionlotesmethod==3){
 double calclotsC=LastOrderlotsc*multiplicadorC*riskextrapolatorcCrash*avrLPC;
@@ -1148,188 +1122,30 @@ ObjectSet(Symbol()+"lotesop",OBJPROP_YDISTANCE,100);
 // De momento pondremos en el comentario el sistema para facilitar la programación.
 
 
-string FordersendV=Symbol()+"OrdsV";
-string FordersendC=Symbol()+"OrdsC";
 
 if(spreadvalue<maxspread){
-
-    //------------INICIO VENTA sola
-
-
-    if(posicionesabiertasrobotv==0&&lotesposicionv>minlots){
-
-if(probabilidadV>probabilidadC){//&&probabilidadV>probabilidadC ------
-//OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red);
-//APERTURA OBSERVADO
- string GFordersendV1 = FileOpen(FordersendV,FILE_WRITE);//|FILE_READ| FILE_WRITE
-  if(GFordersendV1==INVALID_HANDLE){
- printf("GF Error 7");
- }else{
-   string FWordersendV1 = Bid+":"+TimeCurrent();
-           FileWrite(GFordersendV1,FWordersendV1);
-           FileClose(GFordersendV1);
-    }
-//FIN APERTURA OBSERVADO
-}
-      }
-      //------------Fin venta sola
-    //------------INICIO COMPRA sola
-
-    if(posicionesabiertasrobotc==0&&lotesposicionc>minlots){
-
-
-      if(probabilidadV<probabilidadC){//&&probabilidadV<probabilidadC---- &&CcogB>CcogS
-     //OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue);
-
-
-      //APERTURA OBSERVADO
-       string GFordersendC1 = FileOpen(FordersendC,FILE_WRITE);//|FILE_READ| FILE_WRITE
-        if(GFordersendC1==INVALID_HANDLE){
-       printf("GF Error 8");
-       }else{
-         string FWordersendC1 = Ask+":"+TimeCurrent();
-                 FileWrite(GFordersendC1,FWordersendC1);
-                 FileClose(GFordersendC1);
-          }
-      //FIN APERTURA OBSERVADO
-
-
-      }
-
-
-       }
-    //-------------FIN COMPRA SOLA
-    //----------------INICIO VENTA GRUPAL
-    if(posicionesabiertasrobotv>0&&filter1v==1&&posicionesabiertasrobotv<maxposition&&tiempoelapsedS>240&&lotesposicionv>minlots){
-
-      if(probabilidadV>probabilidadC){//&&probabilidadV>probabilidadC -------- //&&PRavrC<PRavrV
-      //OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red);
-
-
-      //APERTURA OBSERVADO
-       string GFordersendV2 = FileOpen(FordersendV,FILE_WRITE);//|FILE_READ| FILE_WRITE
-        if(GFordersendV2==INVALID_HANDLE){
-       printf("GF Error 9");
-       }else{
-         string FWordersendV2 = Bid+":"+TimeCurrent();
-                 FileWrite(GFordersendV2,FWordersendV2);
-                 FileClose(GFordersendV2);
-          }
-      //FIN APERTURA OBSERVADO
-      }
-
-    }
-
-    //----------------FIN VENTA GRUPAL
-    //----------------INICIO COMPRA GRUPAL
-    if(posicionesabiertasrobotc>0&&filter1c==1&&posicionesabiertasrobotc<maxposition&&tiempoelapsedB>240&&lotesposicionc>minlots){
-
-
-      if(probabilidadV<probabilidadC){//&&probabilidadV<probabilidadC ---------- &&CcogB>CcogS &&PRavrC>PRavrV
-      //OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue);
-      //APERTURA OBSERVADO
-       string GFordersendC2 = FileOpen(FordersendC,FILE_WRITE);//|FILE_READ| FILE_WRITE
-        if(GFordersendC2==INVALID_HANDLE){
-       printf("GF Error 10");
-       }else{
-         string FWordersendC2 = Ask+":"+TimeCurrent();
-                 FileWrite(GFordersendC2,FWordersendC2);
-                 FileClose(GFordersendC2);
-          }
-      //FIN APERTURA OBSERVADO
-      }
-
-
-
-
-
-
-      }
-
-
-
-    //FIN COMPRA GRUPAL
-
-}
-
-//ORDER SEND
-string OrdersendOV, OrdersendOV1[],OrdersendOC, OrdersendOC1[];
-double TEOrdersend=TimeCurrent()-60;
-
-
-if(FileIsExist(FordersendC)==true){
-
-  string FRordersendC = FileOpen(FordersendC,FILE_READ);// | FILE_WRITE
-  if(FRordersendC==INVALID_HANDLE){
-  printf("File Read Error 3");
-  }else{
-  OrdersendOC = FileReadString(FRordersendC);
-  FileClose(FRordersendC);
+  if(posicionesabiertasrobotc==0&&op=1){
+    OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue);
   }
-  StringSplit(OrdersendOC,sep,OrdersendOC1);
-  double POrdersendC=OrdersendOC1[0];
-  double TOrdersendC=OrdersendOC1[1];
-
-  if(TEOrdersend>TOrdersendC){
-  if(Ask<POrdersendC){
-    //APERTURA OBSERVADO
-     string GFordersendC3 = FileOpen(FordersendC,FILE_WRITE);//|FILE_READ| FILE_WRITE
-      if(GFordersendC3==INVALID_HANDLE){
-     printf("GF Error 11");
-     }else{
-       string FWordersendC3 = Ask+":"+TimeCurrent();
-               FileWrite(GFordersendC3,FWordersendC3);
-               FileClose(GFordersendC3);
-        }
-    //FIN APERTURA OBSERVADO
+  if(posicionesabiertasrobotc>0&&filter1c&&op=1){
+    OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue);
   }
-  if(Ask>POrdersendC){
-     if(OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue)){
-       FileDelete(FordersendC);
-     }
+  if(posicionesabiertasrobotv==0&&op=2){
+    OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red);
   }
-
-  }
-}
-
-
-if(FileIsExist(FordersendV)==true){
-
-  string FRordersendV = FileOpen(FordersendV,FILE_READ);// | FILE_WRITE
-  if(FRordersendV==INVALID_HANDLE){
-  printf("File Read Error 3");
-  }else{
-  OrdersendOV = FileReadString(FRordersendV);
-  FileClose(FRordersendV);
-  }
-  StringSplit(OrdersendOV,sep,OrdersendOV1);
-  double POrdersendV=OrdersendOV1[0];
-  double TOrdersendV=OrdersendOV1[1];
-
-  if(TEOrdersend>TOrdersendV){
-  if(Bid>POrdersendV){
-    //APERTURA OBSERVADO
-     string GFordersendV3 = FileOpen(FordersendV,FILE_WRITE);//|FILE_READ| FILE_WRITE
-      if(GFordersendV3==INVALID_HANDLE){
-     printf("GF Error 11");
-     }else{
-       string FWordersendV3 = Bid+":"+TimeCurrent();
-               FileWrite(GFordersendV3,FWordersendV3);
-               FileClose(GFordersendV3);
-        }
-    //FIN APERTURA OBSERVADO
-  }
-  if(Bid<POrdersendV){
-     if(OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red)){
-       FileDelete(FordersendV);
-     }
-  }
-
+  if(posicionesabiertasrobotv>0&&filter1v&&op=2){
+    OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red);
   }
 }
 
 
 
+
+
+
+//---------------------------------------------------------------------
+// pips modify demomento no se va a utilizar, aunque puede servir para precios objetivos, ya se vera.
+//---------------------------------------------------------------------
 int pipsmodify2V=pipsmodify;
 int pipsmodify2C=pipsmodify;
 if(ordertpmodify==true){
