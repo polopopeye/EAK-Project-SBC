@@ -745,22 +745,22 @@ OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
 if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
   SegundosElapsed=TimeCurrent()-OrderOpenTime();//tiempo en segundos
 
-//RIESGO NOTA
-if(RiesgoInicial>0){
-  if(SegundosElapsed>Tiempomedioporoperacion){
-    //Incremento riesgo Exponencial. X^1
-    //RiesgoTiempo=RAIZCUADRADA((RiesgoInicial/Tiempomedioporoperacion)*(SegundosElapsed-Tiempomedioporoperacion))
-    //RiesgoTiempo+RiesgoInicial=RiesgoTiempoCompleto;
-  }
-}else{
 
-}
 
 
 
 if(FileIsExist("S1.txt")){
   RiskBehavior=1;
   //aqui tiene que dar info del archivo.
+  //RIESGO NOTA
+  if(SegundosElapsed>Tiempomedioporoperacion){
+    //Incremento riesgo Exponencial. X^1
+    //RiesgoTiempo=RAIZCUADRADA((RiesgoInicial/Tiempomedioporoperacion)*(SegundosElapsed-Tiempomedioporoperacion))
+    //RiesgoTiempo+RiesgoInicial=RiesgoTiempoCompleto;
+    //El riesgo inicial viene indicado al porcentaje de victorias y rentibilidad esperada por operacion.
+    //Si no hay estos datos
+  }
+
 }else{
   RiskBehavior=1;
 }
