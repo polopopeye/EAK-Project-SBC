@@ -1,23 +1,5 @@
 //+------------------------Kenneth Suarez-------------------------------+
 //                   Expert Advisor MUFASA V1.5- 2014-2018
-//gestion de lotes y operaciones con martingale(2 versiones), con grid(2 Versiones),
-//filtro fisher (cuando abrir operacion)- histo (determina si esta sobrevalorado).
-//Resistencias (Identifica resistencias),MAtrend(identifica tendencia),
-//bollinger(identifica bandas bollinger) itrend(tendencias) mirror(cuando abrir operacion),
-//ESTRATEGIA 1
-//histo muy alto para evitar operaciones contrarias al mercado y favorecer a las faciles
-//fisher simple para abrir operaciones seguras.
-//grid fijo relativamente bajo(50),
-//tp fijo relativamente bajo (cerrar operaciones rapido),
-//martigale v1 relativamente bajo.
-//ESTRATEGIA 2
-//histo muy alto para evitar operaciones contrarias al mercado y favorecer a las faciles
-//fisher simple para abrir operaciones seguras.
-//grid variable primero relativamente alto para evitar dropdown alto,
-//despues relativamente bajo, para cerrar varias posiciones en positivo.
-//(evita perdidas o pocas ganancias y muchas posiciones abiertas)
-//tp variable primero relativamente alto y luego bajo a medida de varias operaciones.
-//martigale v1 relativamente alto.
 //+---------------------------------------------------------------------+
 
 //  double Extrapolatorgoodop=1.45;
@@ -34,7 +16,7 @@
   //+---------------------------------------------------------------------+
 bool debugoption=true;
 bool advanceddebug=false;
-string commentID="EAK";
+string commentID="error";
  string semaforv2="SEMAFOR V2";
  bool semafor2ind=true;
  string cogindv2t="CENTEROFGRAVITY";
@@ -357,63 +339,77 @@ ObjectSetText(Symbol()+2,"PipsC: "+DiffPipsc+" PipsV: "+DiffPipsv,7,NULL,Orange)
 // de envio de operacion, donde se envia la operación y se crea el archivo con el sistema utilizado.
 
 
+//Tienen que cumplir,
+//Reglas de apertura, cierre, precio objetivo, probabilidad (expected value),RiesgoInicial,
 
 
+//ESTRATEGIA1 - S1
+bool s1=true;
+bool s2=true;
 double priceima = iMA(Symbol(),PERIOD_M1,1,0,MODE_EMA,PRICE_MEDIAN,0);
-double PRcogB=0;
-double PRcogS=0;
-double CcogB = 1;
-double CcogS = 1;
+int op=0;
 
-if(cogindv2==true){
+if(s1==true){
+  double PRcogB=0;
+  double PRcogS=0;
+  double CcogB = 1;
+  double CcogS = 1;
+
   double cognumbera = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,3,0);
   double cognumberb = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,1,0);
   double cognumberc = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,2,0);
   double cognumberd = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,4,0);
 
-  double cognumberap = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,3,1);
-  double cognumberbp = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,1,1);
-  double cognumbercp = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,2,1);
-  double cognumberdp = iCustom(Symbol(),PERIOD_M5,"cog",125,2,0,0.8,1102,4,1);
-
-if(priceima>cognumbera&&cognumberap>cognumbera){
-  //venta
-PRcogS=0.60;
-}else{
-PRcogS=0;
-}
-if(priceima<cognumberd&&cognumberdp<cognumberd){
-  //compra
-PRcogB=0.60;
-}else{
-PRcogB=0;
-}
-
-ObjectSetText(Symbol()+"cog","COG  S:"+PRcogS+" B:"+PRcogB,7,NULL,Orange);
-  ObjectSet(Symbol()+"cog",OBJPROP_CORNER,0);
-  ObjectSet(Symbol()+"cog",OBJPROP_XDISTANCE,15);
-  ObjectSet(Symbol()+"cog",OBJPROP_YDISTANCE,150);
-
+  if(priceima>cognumbera){
+    //venta
+    commentID="S1";
+  PRcogS=0.60;
+  op=2;
+  }else{
+  PRcogS=0;
+  }
+  if(priceima<cognumberd){
+    //compra
+    commentID="S1";
+  PRcogB=0.60;
+  op=1;
+  }else{
+  PRcogB=0;
+  }
 }
 
 
 
+if(s2==true){
+  //SpearmanRank
+  double PRspearmanRankB,PRspearmanRankS;
+  double spearmanrankA=iCustom(Symbol(),PERIOD_M15,"SpearmanRankCorr",14,0,30,true,0,0);
+  //printf("Spearman"+spearmanrankA);
+  if(spearmanrankA>0){
+    //PermitirCompra;
+    PRspearmanRankB=0.7;
+    PRspearmanRankS=0;
+    op=1;
+    commentID="S2";
+  }else{
+    //permitirVenta;
+    PRspearmanRankB=0;
+    PRspearmanRankS=0.7;
+    op=2;
+    commentID="S2";
 
-//SpearmanRank
-
-double PRspearmanRankB,PRspearmanRankS;
-double spearmanrankA=iCustom(Symbol(),PERIOD_M15,"SpearmanRankCorr",14,0,30,true,0,0);
-//printf("Spearman"+spearmanrankA);
-if(spearmanrankA>0){
-  //PermitirCompra;
-  PRspearmanRankB=0.7;
-  PRspearmanRankS=0;
-}else{
-  //permitirVenta;
-  PRspearmanRankB=0;
-  PRspearmanRankS=0.7;
-
+  }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -494,30 +490,6 @@ if(semaforindv2S==NULL||semaforindv2S==EMPTY_VALUE){
 
 
 
- //------------------------------------------------------------------
- // EOPR
- //------------------------------------------------------------------
-int vortex=0;
-int tmas_slope=0;
- double VortexC= iCustom(Symbol(),PERIOD_M5,"Vortex_Indicator",28,0,1);
- double VortexV= iCustom(Symbol(),PERIOD_M5,"Vortex_Indicator",28,1,1);
- double VortexCp= iCustom(Symbol(),PERIOD_M5,"Vortex_Indicator",28,0,2);
- double VortexVp= iCustom(Symbol(),PERIOD_M5,"Vortex_Indicator",28,1,2);
-
-if(VortexC>VortexV){
-  //compra
-if(VortexCp<VortexC&&VortexCp<VortexVp){
-  //printf("Compra Confirmada");
-  vortex=1;
-}
-}
-if(VortexC<VortexV){
-  //compra
-if(VortexVp<VortexV&&VortexCp>VortexVp){
-  //printf("Venta Confirmada");
-  vortex=2;
-}
-}
 
 
 
@@ -724,11 +696,6 @@ if(probabilidadC2<probabilidadV2){
 
 }
 
- ObjectSetText(Symbol()+"PR","[PR: 1"+probabilidad0+"] 2"+probabilidad1,12,NULL,Orange);
-   ObjectSet(Symbol()+"PR",OBJPROP_CORNER,0);
-   ObjectSet(Symbol()+"PR",OBJPROP_XDISTANCE,15);
-   ObjectSet(Symbol()+"PR",OBJPROP_YDISTANCE,130);
-
 
 
 
@@ -753,6 +720,10 @@ if(probabilidadC2<probabilidadV2){
 
 
 
+
+
+
+
 double LastOrderlotsv = 0;
 double LastOrderlotsc = 0;
 double gridpositionV=100000;
@@ -764,12 +735,37 @@ double tiempoelapsedB=0;
 string FcierreV=Symbol()+"Cv";
 string FcierreC=Symbol()+"Cc";
 bool vctV,vctC,ordcloseC1,ordcloseV1;
-
-
+gridpositionC=gridposition;
+gridpositionV=gridposition;
+double RiskBehavior=1;
+int Tiempomedioporoperacion=86400;
 for(int cnt1=0;cnt1<OrdersTotal();cnt1++)
 {
 OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
-if(OrderSymbol()==Symbol()&&OrderComment()==commentID){
+if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
+  SegundosElapsed=TimeCurrent()-OrderOpenTime();//tiempo en segundos
+
+//RIESGO NOTA
+if(RiesgoInicial>0){
+  if(SegundosElapsed>Tiempomedioporoperacion){
+    //Incremento riesgo Exponencial. X^1
+    //RiesgoTiempo=RAIZCUADRADA((RiesgoInicial/Tiempomedioporoperacion)*(SegundosElapsed-Tiempomedioporoperacion))
+    //RiesgoTiempo+RiesgoInicial=RiesgoTiempoCompleto;
+  }
+}else{
+
+}
+
+
+
+if(FileIsExist("S1.txt")){
+  RiskBehavior=1;
+  //aqui tiene que dar info del archivo.
+}else{
+  RiskBehavior=1;
+}
+
+
 if(OrderType()==OP_SELL){
  LastOrderlotsv=OrderLots();
  Totalorderslotv=Totalorderslotv+OrderLots();
@@ -787,22 +783,6 @@ tiempoelapsedB=TimeCurrent()-OrderOpenTime();
 }
 
 
-
-if(probabilidadC>probabilidadV){
-  if(posicionesabiertasrobotv>3){
-    gridpositionV=gridposition;//*3
-  }else{
-    gridpositionV=gridposition;
-  }
-  gridpositionC=gridposition;
-}else{
-  if(posicionesabiertasrobotc>3){
-    gridpositionC=gridposition;//*3
-  }else{
-    gridpositionC=gridposition;
-  }
-  gridpositionV=gridposition;
-}
 
 
 
