@@ -11,7 +11,7 @@
   double cogBP=0.9;
   //  double multiplicador=1.5; //Martingale factor to recover bad choices
   //double multiplicador=1.35; //Martingale factor to recover bad choices
-    double maxspread=50;
+  double maxspread=50;
 
   //+---------------------------------------------------------------------+
 bool debugoption=true;
@@ -317,20 +317,9 @@ ObjectSetText(Symbol()+2,"PipsC: "+DiffPipsc+" PipsV: "+DiffPipsv,7,NULL,Orange)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
      //------------------------------------------------------------------
      // SISTEMAS
+     // Ejecutan las operaciones de apertura y cierre
      //------------------------------------------------------------------
 
 
@@ -342,14 +331,33 @@ ObjectSetText(Symbol()+2,"PipsC: "+DiffPipsc+" PipsV: "+DiffPipsv,7,NULL,Orange)
 //Tienen que cumplir,
 //Reglas de apertura, cierre, precio objetivo, probabilidad (expected value),RiesgoInicial,
 
-
+//Variables sin definir
+int op=0;
+double expectedvalue1=0;
+double expectedvalue2=0;
+double interestrates=0;
+double crecimiento=0;
+double riesgo=0;
+double riesgoporcrecimiento=0;
+double probabilidad=0;
+//Variables Definidas
+double inflacion=2;//1+3.14159^0
+double priceima = Ask; //double priceima = iMA(Symbol(),PERIOD_M1,1,0,MODE_EMA,PRICE_MEDIAN,0);
+int Tiempomedioporoperacion=0;
+int Lotesmedioporoperacion=0;
 //ESTRATEGIA1 - S1
 bool s1=true;
 bool s2=true;
-double priceima = iMA(Symbol(),PERIOD_M1,1,0,MODE_EMA,PRICE_MEDIAN,0);
-int op=0;
+
+//----------- FORMULAS INTERESANTES ----------------//
+//double interestrates=expectedvalue1/priceima;
+//double interestrates=crecimiento*inflacion*riesgo;
+//double riesgo*crecimiento=interestrates/inflacion;
+//double RAIZCUADRADA(riesgo*crecimiento)=riesgo (aproximado)
+//double expectedvalue1*p+expectedvalue2*(1-p)=priceima;
 
 if(s1==true){
+  int Tiempomedioporoperacion=14400;
   double PRcogB=0;
   double PRcogS=0;
   double CcogB = 1;
@@ -365,6 +373,15 @@ if(s1==true){
     commentID="S1";
   PRcogS=0.60;
   op=2;
+  expectedvalue1=cognumberd;
+  expectedvalue2=cognumbera*1.1;
+  interestrates=expectedvalue1/priceima;
+  riesgoporcrecimiento=interestrates/inflacion;
+  riesgo=MathSqrt(riesgoporcrecimiento);
+  // probabilidad=expectedvalue1*p+expectedvalue2*(1-p)=priceima;
+  // expectedvalue1*p+expectedvalue2-expectedvalue2*p=priceima;
+  // expectedvalue1-expectedvalue2=priceima-expectedvalue2;
+  probabilidad=(priceima-expectedvalue2)/(expectedvalue1-expectedvalue2);
   }else{
   PRcogS=0;
   }
@@ -373,6 +390,12 @@ if(s1==true){
     commentID="S1";
   PRcogB=0.60;
   op=1;
+  expectedvalue1=cognumbera;
+  expectedvalue2=cognumberd*1.1;
+  interestrates=expectedvalue/priceima;
+  riesgoporcrecimiento=interestrates/inflacion;
+  riesgo=MathSqrt(riesgoporcrecimiento);
+  probabilidad=(priceima-expectedvalue2)/(expectedvalue1-expectedvalue2);
   }else{
   PRcogB=0;
   }
@@ -380,327 +403,17 @@ if(s1==true){
 
 
 
-if(s2==true){
-  //SpearmanRank
-  double PRspearmanRankB,PRspearmanRankS;
-  double spearmanrankA=iCustom(Symbol(),PERIOD_M15,"SpearmanRankCorr",14,0,30,true,0,0);
-  //printf("Spearman"+spearmanrankA);
-  if(spearmanrankA>0){
-    //PermitirCompra;
-    PRspearmanRankB=0.7;
-    PRspearmanRankS=0;
-    op=1;
-    commentID="S2";
-  }else{
-    //permitirVenta;
-    PRspearmanRankB=0;
-    PRspearmanRankS=0.7;
-    op=2;
-    commentID="S2";
-
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-if(Extrapolatorind==true){
-  double PRextrapolatorB,PRextrapolatorS,riskextrapolatorc, riskextrapolatorv;
-  int extrapolatortend=0;
-  double extrapolatorA = iCustom(Symbol(),PERIOD_M15,"Extrapolator",Methodextrapolator,30,300,0.6,100,20,0.0001,0,1,0);
-  double extrapolatorB = iCustom(Symbol(),PERIOD_M1,"Extrapolator",Methodextrapolator,30,300,0.6,100,20,0.0001,0,1,0);
-if(extrapolatorA>priceima){//&&extrapolatorB>priceima
-  extrapolatortend=2;
-  PRextrapolatorS=0.6;
-  PRextrapolatorB=0;
-  riskextrapolatorc=Extrapolatorbadop;
-  riskextrapolatorv=Extrapolatorgoodop;
-   if(debugoption==true){
-     ObjectSetText(Symbol()+"Extrapolator","Extrapolator -> Venta"+riskextrapolatorv+" "+riskextrapolatorc,7,NULL,Red);
-       ObjectSet(Symbol()+"Extrapolator",OBJPROP_CORNER,0);
-       ObjectSet(Symbol()+"Extrapolator",OBJPROP_XDISTANCE,15);
-       ObjectSet(Symbol()+"Extrapolator",OBJPROP_YDISTANCE,50);
-   }
-}
-if(extrapolatorA<priceima){//&&extrapolatorB<priceima
-  extrapolatortend=1;
-  PRextrapolatorB=0.6;
-  PRextrapolatorS=0;
-   riskextrapolatorc=Extrapolatorgoodop;
-   riskextrapolatorv=Extrapolatorbadop;
-   if(debugoption==true){
-     ObjectSetText(Symbol()+"Extrapolator","Extrapolator -> Compra"+riskextrapolatorc+" "+riskextrapolatorv,7,NULL,Blue);
-     ObjectSet(Symbol()+"Extrapolator",OBJPROP_CORNER,0);
-     ObjectSet(Symbol()+"Extrapolator",OBJPROP_XDISTANCE,15);
-     ObjectSet(Symbol()+"Extrapolator",OBJPROP_YDISTANCE,50);
-   }
-}
-
-}
-
-
-
-
-if(semafor2ind==true){
-int semtC,semtV;
-  if(posicionesabiertasrobotc>=1){
-    semtC=70;
-  }else{
-  semtC=70;
-  }
-  if(posicionesabiertasrobotv>=1){
-    semtV=70;
-  }else{
-semtV=70;
-  }
-
-double semaforindv2B = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",10,20,semtC,4,1);
-double semaforindv2S = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",10,20,semtV,5,1);
-  //double semaforindv2BC = iCustom(Symbol(),PERIOD_M1,"semaforov2eak",10,20,800,4,1);
-  //double semaforindv2SC = iCustom(Symbol(),PERIOD_M1,"semaforov2eak",10,20,800,5,1);
-  double PRsemaforC=0;
-  double PRsemaforV=0;
-  double PRsemaforC2=0;
-  double PRsemaforV2=0;
-if(semaforindv2B==NULL||semaforindv2B==EMPTY_VALUE){
-  //PRsemaforC=0.6;
- PRsemaforC=0;
-}else{
-  PRsemaforC=0.6;
-}
-if(semaforindv2S==NULL||semaforindv2S==EMPTY_VALUE){
-  //PRsemaforV=0.6;
-  PRsemaforV=0;
-}else{
-  PRsemaforV=0.6;
-}
-
-
-
-}
-
-
-
-
-
-
-int avramis=0;
-double avramisgoodop=1.50;
-double avramisbadop=0.70;
-double avramisc = iCustom(Symbol(),PERIOD_M5,"Cronex_Taichi",0,0);
-double avramisv = iCustom(Symbol(),PERIOD_M5,"Cronex_Taichi",3,0);
-double avramisc15 = iCustom(Symbol(),PERIOD_M15,"Cronex_Taichi",0,0);
-double avramisv15 = iCustom(Symbol(),PERIOD_M15,"Cronex_Taichi",3,0);
-double avramisc30 = iCustom(Symbol(),PERIOD_M30,"Cronex_Taichi",0,0);
-double avramisv30 = iCustom(Symbol(),PERIOD_M30,"Cronex_Taichi",3,0);
-double avramisc60 = iCustom(Symbol(),PERIOD_H1,"Cronex_Taichi",0,0);
-double avramisv60 = iCustom(Symbol(),PERIOD_H1,"Cronex_Taichi",3,0);
-double avrLPC,avrLPV;
-double PRavrC=0,PRavrV=0;
-if(avramisc!=EMPTY_VALUE&&avramisv!=EMPTY_VALUE)avramis=1;
-if(avramis==1){
-  if((avramisc15>avramisv15)||(avramisc30>avramisv30)||(avramisc60>avramisv60)){
-    PRavrC=0.6;
-    avrLPC=avramisgoodop;
-  }else{
-    avrLPC=avramisbadop;
-  }
-  if((avramisc15<avramisv15)||(avramisc30<avramisv30)||(avramisc60<avramisv60)){
-    PRavrV=0.6;
-    avrLPV=avramisgoodop;
-  }else{
-    avrLPV=avramisbadop;
-  }
-}
-
-
-
-
-
-
-
- double tmaslopeC = iCustom(Symbol(),PERIOD_M5,"tma_slope_nrp_alerts",75,150,5,true,0.005,-0.005,"EAK",false,false,false,false,false,false,2,0);
- double tmaslopeCp = iCustom(Symbol(),PERIOD_M5,"tma_slope_nrp_alerts",75,150,5,true,0.005,-0.005,"EAK",false,false,false,false,false,false,2,1);
- double tmaslopeV = iCustom(Symbol(),PERIOD_M5,"tma_slope_nrp_alerts",75,150,5,true,0.005,-0.005,"EAK",false,false,false,false,false,false,3,0);
- double tmaslopeVp = iCustom(Symbol(),PERIOD_M5,"tma_slope_nrp_alerts",75,150,5,true,0.005,-0.005,"EAK",false,false,false,false,false,false,3,1);
- double tmaslopeCp1 = iCustom(Symbol(),PERIOD_M5,"tma_slope_nrp_alerts",75,150,5,true,0.005,-0.005,"EAK",false,false,false,false,false,false,2,2);
- double tmaslopeVp1 = iCustom(Symbol(),PERIOD_M5,"tma_slope_nrp_alerts",75,150,5,true,0.005,-0.005,"EAK",false,false,false,false,false,false,3,2);
-
-
-
-
- int tma1c=0,tma1v=0,tma2c=0,tma2v=0,tma3c=0,tma3v=0;
-
-if(tmaslopeC!=EMPTY_VALUE)tma1c=1;
-if(tmaslopeV!=EMPTY_VALUE)tma1v=1;
-if(tmaslopeCp!=EMPTY_VALUE)tma2c=1;
-if(tmaslopeVp!=EMPTY_VALUE)tma2v=1;
-if(tmaslopeCp1!=EMPTY_VALUE)tma3c=1;
-if(tmaslopeVp1!=EMPTY_VALUE)tma3v=1;
-
-
-double tmaC1=NormalizeDouble(tmaslopeC,4);
-double tmaC2=NormalizeDouble(tmaslopeCp,4);
-double tmaC3=NormalizeDouble(tmaslopeCp1,4);
-double tmaV1=NormalizeDouble(tmaslopeV,4);
-double tmaV2=NormalizeDouble(tmaslopeVp,4);
-double tmaV3=NormalizeDouble(tmaslopeVp1,4);
-
-
-if(tma1c==1){//&&tmaC2>tmaC3 &&tma3c==1   &&tmaC1>tmaC2&&tma1c==1&&tma2c==1
- //subiendo Confirmado
- tmas_slope=1;
-}
-if(tma1v==1){//&&tmaV2<tmaV3 &&tma3v==1 &&tmaV1<tmaV2&&tma1v==1&&tma2v==1
- //Bajando Confirmado
- tmas_slope=2;
-}
-
-double PRopenC=0;
-double PRopenV=0;
-if(tmas_slope==1){
-  //printf("Compra");
-   PRopenC=0.6;
-   PRopenV=0;
-}
-if(tmas_slope==2){
-  //printf("Venta");
-  PRopenC=0;
-  PRopenV=0.6;
-}
-
-double PRtrC,PRtrV;
-double tr23V = iCustom(Symbol(),PERIOD_M5,"TrendSignal 2.3 mtf",PERIOD_M15,67.0,33.0,0,4,1.0,true,false,false,false,false,false,false,0,1);
-double tr23C = iCustom(Symbol(),PERIOD_M5,"TrendSignal 2.3 mtf",PERIOD_M15,67.0,33.0,0,4,1.0,true,false,false,false,false,false,false,1,1);
-if(tr23V!=EMPTY_VALUE){
-//  printf("VENTAAAAAAAAAAAAAAAAAA");
-  PRtrV=0.6;
-  PRtrC=0;
-}else{
-  printf("Nada");
-
-}
-if(tr23C!=EMPTY_VALUE){
-//  printf("COMPRAAAAAAAAAAAAAAAAAA");
-  PRtrC=0.6;
-  PRtrV=0;
-}else{
-  printf("Nada");
-}
-
-
-
-// Este apartado se descontinua porque estará espicificado arriba en el sistema la cantidad de probabilidad
-// con la que cada sistema trabaje, y luego se hara una post auditoria para verificar los sistemas
-
- //------------------------------------------------------------------
- // PROBABILIDAD
- //------------------------------------------------------------------
-
- double probabilidadC=0;
- double probabilidadV=0;
- double probabilidadC2=0;
- double probabilidadV2=0;
- double probabilidadC3=0;
- double probabilidadV3=0;
- int variablestotalesC;
- int variablestotalesV;
- int variablestotales2=1;
-  int variablestotales3=1;
-  string probabilidad0,probabilidad1;
- //double variablesprobabilidadB=PRholtB+PRsemaforC;
- //double variablesprobabilidadS=PRholtS+PRsemaforV;
- double variablesprobabilidadB=0,variablesprobabilidadB2=0,variablesprobabilidadS=0,variablesprobabilidadS2=0;
-
-
-double PR1go=(PRcogB+PRsemaforC)/10; //PRextrapolatorB
-double PR2go=(PRcogS+PRsemaforV)/10;
-
-if(PRavrC<PRavrV){
-  variablesprobabilidadB=0;
-}else{
-  variablesprobabilidadB=PRtrC;//PRsemaforC;//PRhiloB
-}
-if(PRavrV<PRavrC){
-  variablesprobabilidadS=0;//PRsemaforV;//+PRhiloS;
-}else{
-  variablesprobabilidadS=PRtrV;//PRsemaforV;//+PRhiloS;
-}
-
-
-
-if(PRcogB>0){
-  variablestotalesC=1;
-  variablesprobabilidadB2=PRsemaforC;//+PRspearmanRankB;//+PRholtB;PRspearmanRankB;//PRopenC+PRsemaforC
-
-}else{
-  variablestotalesC=1;
-  variablesprobabilidadB2=0;//+PRspearmanRankB;//+PRholtB;PRspearmanRankB;//PRopenC+PRsemaforC
-
-}
-if(PRcogS>0){
-  variablestotalesV=1;
-  variablesprobabilidadS2=PRsemaforV;//+PRspearmanRankB;//+PRholtB;PRspearmanRankB;//PRopenC+PRsemaforC
-}else{
-  variablestotalesV=1;
-
-  variablesprobabilidadS2=0;//+PRspearmanRankB;//+PRholtB;PRspearmanRankB;//PRopenC+PRsemaforC
-
-}
-
-
-
- probabilidadC= variablesprobabilidadB/variablestotalesC;
- probabilidadV= variablesprobabilidadS/variablestotalesV;
-
-
-
-   probabilidadC2= variablesprobabilidadB2/variablestotales2;
-   probabilidadV2= variablesprobabilidadS2/variablestotales2;
-
-
- double variablesprobabilidadB3=PRsemaforC;//PRhiloB
- double variablesprobabilidadS3=PRsemaforV;//+PRhiloS;
-
-
-  probabilidadC2= variablesprobabilidadB2/variablestotales2;
-  probabilidadV2= variablesprobabilidadS2/variablestotales2;
-
-
-
- probabilidadC3= variablesprobabilidadB3/variablestotales3;
- probabilidadV3= variablesprobabilidadS3/variablestotales3;
-
-if(probabilidadC>probabilidadV){
-  probabilidad0="Compra";
-}
-if(probabilidadC<probabilidadV){
-  probabilidad0="Venta";
-}
-if(probabilidadC2>probabilidadV2){
-  probabilidad1="Compra";
-  //printf("HOLA COMPAAAAAAAAAAAA");
-}
-if(probabilidadC2<probabilidadV2){
-  probabilidad1="Venta";
-  //printf("HOLA ventaAAAAAAAAAAAA");
-
-}
-
 
 
 
 //------------------------------------------------------------------
-// RIESGO - CIERRE - BEHAVIOUR
+// CUERPO DEL ROBOT
+//Aquí se crea el espacio para
+//APERTURA - CIERRE - GESTIÓN LOTES - BAHAVIOUR
+//------------------------------------------------------------------
+
+//------------------------------------------------------------------
+// BEHAVIOUR
 //------------------------------------------------------------------
 
 // Primero se cataloga una operacion como riesgosa o no, en funcion a parametros como, tiempo, inversion,
@@ -719,226 +432,54 @@ if(probabilidadC2<probabilidadV2){
 // y un exist file.
 
 
+double RiskBehavior=0;
+integer SegundosElapsed=0;
 
+for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
+  OrderSelect(cnta1,SELECT_BY_POS,MODE_TRADES);
+  if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
+    SegundosElapsed=TimeCurrent()-OrderOpenTime();//tiempo en segundos
 
-
-
-
-double LastOrderlotsv = 0;
-double LastOrderlotsc = 0;
-double gridpositionV=100000;
-double gridpositionC=100000;
-double Totalorderslotv=0;
-double Totalorderslotc=0;
-double tiempoelapsedS=0;
-double tiempoelapsedB=0;
-string FcierreV=Symbol()+"Cv";
-string FcierreC=Symbol()+"Cc";
-bool vctV,vctC,ordcloseC1,ordcloseV1;
-gridpositionC=gridposition;
-gridpositionV=gridposition;
-double RiskBehavior=1;
-int Tiempomedioporoperacion=86400;
-for(int cnt1=0;cnt1<OrdersTotal();cnt1++)
-{
-OrderSelect(cnt1,SELECT_BY_POS,MODE_TRADES);
-if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
-  SegundosElapsed=TimeCurrent()-OrderOpenTime();//tiempo en segundos
-
-
-
-
-
-if(FileIsExist("S1.txt")){ //aqui se va a sacar solo el archivo info de la operacion en especial.
-  RiskBehavior=1;
-  //aqui tiene que dar info del archivo.
-  //RIESGO NOTA
-  if(SegundosElapsed>Tiempomedioporoperacion){
-    //Incremento riesgo Exponencial. X^1
-    //RiesgoTiempo=RAIZCUADRADA((RiesgoInicial/Tiempomedioporoperacion)*(SegundosElapsed-Tiempomedioporoperacion))
-    //RiesgoTiempo+RiesgoInicial=RiesgoTiempoCompleto;
-    //El riesgo inicial viene indicado al porcentaje de victorias y rentibilidad esperada por operacion.
-    //Si no hay estos datos no es posible catalogar operacion
-  }
-
-
-}else{
-  RiskBehavior=1;
-}
-
-//--------------------------------------------------------
-
-if(RiskBehavior<50){//Riesgo controlado, cierre normal.
-  //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-}else{
-  //Riesgo alto,
-  if(OrderProfit()>0){
-    //Riesgo alto pero hay beneficios. Se sigue con la estrategia. Cierre normal
-    //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-
-  }else{
-    //Se cierra siguiendo Cierre normal o cierre de la estrategia 1ra.
-    //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-
-  }
-}
-
-
-if(OrderType()==OP_SELL){
- LastOrderlotsv=OrderLots();
- Totalorderslotv=Totalorderslotv+OrderLots();
- tiempoelapsedS=TimeCurrent()-OrderOpenTime();//tiempo en segundos
-
-
-}
-
-if(OrderType()==OP_BUY){
-  LastOrderlotsc=OrderLots();
-Totalorderslotc=Totalorderslotc+OrderLots();
-tiempoelapsedB=TimeCurrent()-OrderOpenTime();
-
-
-}
-
-
-
-
-
-  if(OrderType()==OP_SELL&&probabilidadC2>probabilidadV2&&profitordersV>0){
-    if(posicionesabiertasrobotv>4){
-      vctV=true;
-    }else{
-      //CIERRE OBSERVADO
-       string GFcierreV2 = FileOpen(FcierreV,FILE_WRITE);
-        if(GFcierreV2==INVALID_HANDLE){
-       printf("GF Error 3");
-       }else{
-         string FWcierreV2 = profitordersV+":"+TimeCurrent();
-                 FileWrite(GFcierreV2,FWcierreV2);
-                 FileClose(GFcierreV2);
-          }
-      //CIERRE OBSERVADO
-    }
-}
-if(OrderType()==OP_BUY&&probabilidadV2>probabilidadC2&&profitordersC>0){
-if(posicionesabiertasrobotc>4){
-  vctC=true;
-}else{
-  //PRUEBA CIERRE OBSERVADO
-   string GFcierreC1 = FileOpen(FcierreC,FILE_WRITE);
-    if(GFcierreC1==INVALID_HANDLE){
-   printf("GF Error 2");
-   }else{
-     string FWcierreC1 = profitordersC+":"+TimeCurrent();
-             FileWrite(GFcierreC1,FWcierreC1);
-             FileClose(GFcierreC1);
+    if(FileIsExist("S1.txt")){ //aqui se va a sacar solo el archivo info de la operacion en especial.
+      //aqui tiene que dar info del archivo.
+      //RIESGO NOTA
+      if(SegundosElapsed>Tiempomedioporoperacion){
+        //Incremento riesgo Exponencial. X^1
+        //RiesgoTiempo=RAIZCUADRADA((RiesgoInicial/Tiempomedioporoperacion)*(SegundosElapsed-Tiempomedioporoperacion))
+        //RiesgoTiempo+RiesgoInicial=RiesgoTiempoCompleto;
+        //El riesgo inicial viene indicado al porcentaje de victorias y rentibilidad esperada por operacion.
+        //Si no hay estos datos no es posible catalogar operacion
       }
-  //FIN CIERRE OBSERVADO
-}
-
-  }
-
-}
+    }else{
+      //Si no hay archivo de donde sacar el riesgo, riesgo es neutro.
+    }
 
 
-string CierreOC1[];
-string CierreOV1[];
-string CierreOC="N";
-string CierreOV="N";
-int TCierreObservado=TimeCurrent()-30;
-int cierrecloseV=0;
-int cierrecloseC=0;
-double trashopC=0;
-if(posicionesabiertasrobotc>0){
-trashopC=profitordersC/posicionesabiertasrobotc;
-}
-double trashopV=0;
-if(posicionesabiertasrobotv>0){
-trashopV=profitordersV/posicionesabiertasrobotv;
-}
+    //------------------------------------------------------------------
+    // CIERRE
+    //------------------------------------------------------------------
 
-//CIERRE OBSERVADO CIERRE TOTAL
- if(FileIsExist(FcierreC)==true&&OrderType()==OP_BUY&&OrderSymbol()==Symbol()&&OrderComment()==commentID){
-   //printf("EXITO!");
-   string FRcierreC = FileOpen(FcierreC,FILE_READ);
-   if(FRcierreC==INVALID_HANDLE){
-   printf("File Read Error 1");
-   }else{
-   CierreOC = FileReadString(FRcierreC);
-   FileClose(FRcierreC);
-   }
-   StringSplit(CierreOC,sep,CierreOC1);
-   double PFLCierreC=CierreOC1[0];
-   double TELCierreC=CierreOC1[1];
 
-   if(TCierreObservado>TELCierreC){
-     if(PFLCierreC>profitordersC){
-       if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
-         cierrecloseC++;
+      if(RiskBehavior<50){//Riesgo controlado, cierre normal.
+      //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
+    }else{
+      //Riesgo alto,
+      if(OrderProfit()>0){
+        //Riesgo alto pero hay beneficios. Se sigue con la estrategia. Cierre normal
+        //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
 
-           FileDelete(FcierreC);
-
-     }
-     }
-     if(PFLCierreC<profitordersC){
-       string GFcierreC3 = FileOpen(FcierreC,FILE_WRITE);//|FILE_READ| FILE_WRITE
-        if(GFcierreC3==INVALID_HANDLE){
-       printf("GF Error 5");
-       }else{
-         string FWcierreC3 = profitordersC+":"+TimeCurrent();
-                 FileWrite(GFcierreC3,FWcierreC3);
-                 FileClose(GFcierreC3);
-          }
-     }
-   }//TIEMPO
-    //COSAS POR FUERA
-
- }
-//FIN CIERRE OBSERVADO
-
-//CIERRE OBSERVADO CIERRE TOTAL
- if(FileIsExist(FcierreV)==true&&OrderType()==OP_SELL&&OrderSymbol()==Symbol()&&OrderComment()==commentID){
-   string FRcierreV = FileOpen(FcierreV,FILE_READ);// | FILE_WRITE
-   if(FRcierreV==INVALID_HANDLE){
-   printf("File Read Error 2");
-   }else{
-   CierreOV = FileReadString(FRcierreV);
-   FileClose(FRcierreV);
-   }
-    StringSplit(CierreOV,sep,CierreOV1);
-   double PFLCierreV=CierreOV1[0];
-   double TELCierreV=CierreOV1[1];
-
-   if(TCierreObservado>TELCierreV){
-     if(PFLCierreV>profitordersV){
-
-         if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
-           cierrecloseV++;
-  FileDelete(FcierreV);
-
-         }
-
-     }else{
-       string GFcierreV3 = FileOpen(FcierreV,FILE_WRITE);//|FILE_READ| FILE_WRITE
-        if(GFcierreV3==INVALID_HANDLE){
-       printf("GF Error 6");
-       }else{
-         string FWcierreV3 = profitordersV+":"+TimeCurrent();
-                 FileWrite(GFcierreV3,FWcierreV3);
-                 FileClose(GFcierreV3);
-          }
-     }
-   }
-
- }
- //FIN cierre OBSERVADO
+      }else{
+        //Se cierra siguiendo Cierre normal o cierre de la estrategia 1ra.
+        //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
+      }
+    }
+    //--------------------------------------------------------
+  }//Fin If
+}//Fin For
 
 
 
 
-
-
-}//Fin cierre for
 
 
 
@@ -959,35 +500,29 @@ trashopV=profitordersV/posicionesabiertasrobotv;
 //------------------------------------------------------------------
 //esto esta bien, no permitir operaciones mas malas.
   if(filternegativeopenorders==true){
-    if(DiffPipsv>gridpositionV){
+    if(DiffPipsv>gridposition){
      filter1v=1;
     }else{
      filter1v=0;
     }
-    if(DiffPipsc>gridpositionC){
+    if(DiffPipsc>gridposition){
     filter1c=1;
     }else{
     filter1c=0;
     }
   }
   if(filternegativeopenorders==false){
-    if(DiffPipsv>gridpositionV&&profitordersV<0){ //&&lastorderpS1<0
+    if(DiffPipsv>gridposition&&profitordersV<0){ //&&lastorderpS1<0
      filter1v=1;
     }else{
      filter1v=0;
     }
-    if(DiffPipsc>gridpositionC&&profitordersC<0){ //&&lastorderpB1<0
+    if(DiffPipsc>gridposition&&profitordersC<0){ //&&lastorderpB1<0
     filter1c=1;
     }else{
     filter1c=0;
     }
   }
-
-
-ObjectSetText(Symbol()+"filter1","filter1c: ["+filter1c+"]   filter1v:["+filter1v+"]",7,NULL,Orange);
-  ObjectSet(Symbol()+"filter1",OBJPROP_CORNER,0);
-  ObjectSet(Symbol()+"filter1",OBJPROP_XDISTANCE,15);
-  ObjectSet(Symbol()+"filter1",OBJPROP_YDISTANCE,200);
 
 
 
@@ -1003,25 +538,6 @@ ObjectSetText(Symbol()+"filter1","filter1c: ["+filter1c+"]   filter1v:["+filter1
 
 
      int result=0;
-
-//------------------------------------------------------------------
-// CRASH
-//------------------------------------------------------------------
-double multiplicadorC,multiplicadorV; //Martingale factor to recover bad choices
-multiplicadorC=1.5;
-multiplicadorV=1.5;
-
-
-
-double riskextrapolatorcCrash=riskextrapolatorc;
-double riskextrapolatorvCrash=riskextrapolatorv;
-double CcogSCrash=CcogS;
-double CcogBCrash=CcogB;
-double lotesinicialB=lotesinicial*0.80;
-double lotesinicialG=lotesinicial*1.10;
-double liquidmulti1=posicionesabiertasrobotc+posicionesabiertasrobotv;
-//double liquidmulti=liquidmulti1*3;
-
 
 
 
@@ -1045,74 +561,8 @@ if(gestionlotesmethod==4){
 }
 
 
-
-
-
-
-if(gestionlotesmethod==3){
-double calclotsC=LastOrderlotsc*multiplicadorC*riskextrapolatorcCrash*avrLPC;
-double calclotsV=LastOrderlotsv*multiplicadorV*riskextrapolatorvCrash*avrLPC;
-
-  if(posicionesabiertasrobotc==0){
-    if(probabilidadC<probabilidadV){
-    lotesposicionc=NormalizeDouble(lotesinicialB*riskextrapolatorcCrash*avrLPC,lotround);
-    }else{
-    lotesposicionc=NormalizeDouble(lotesinicialG*riskextrapolatorcCrash*avrLPC,lotround);
-    }
-
-  }else{
-    if(LastOrderlotsc>0){
-if(probabilidadC<probabilidadV){
-  if(LastOrderlotsc>=maxlotsB||calclotsC>=maxlotsB){
-  lotesposicionc=NormalizeDouble(maxlotsB,lotround);
-  }else{
-  lotesposicionc=NormalizeDouble(calclotsC,lotround);
-  }
-}else{
-  if(LastOrderlotsc>=maxlotsG||calclotsC>=maxlotsG){
-  lotesposicionc=NormalizeDouble(maxlotsG,lotround);
-  }else{
-  lotesposicionc=NormalizeDouble(calclotsC,lotround);
-  }
-}
-
-
-    }
-  }
-  if(posicionesabiertasrobotv==0){
-    if(probabilidadC>probabilidadV){
-      lotesposicionv=NormalizeDouble(lotesinicialB*riskextrapolatorvCrash,lotround);
-    }else{
-      lotesposicionv=NormalizeDouble(lotesinicialG*riskextrapolatorvCrash,lotround);
-    }
-  }else{
-    if(LastOrderlotsv>0){
-      if(probabilidadC>probabilidadV){
-        if(LastOrderlotsv>=maxlotsB||calclotsV>=maxlotsB){
-          lotesposicionv=NormalizeDouble(maxlotsB,lotround);
-        }else{
-          lotesposicionv=NormalizeDouble(calclotsV,lotround);//+posicionesabiertasrobotv);
-        }
-      }else{
-        if(LastOrderlotsv>=maxlotsG||calclotsV>=maxlotsG){
-          lotesposicionv=NormalizeDouble(maxlotsG,lotround);
-        }else{
-          lotesposicionv=NormalizeDouble(calclotsV,lotround);//+posicionesabiertasrobotv);
-        }
-      }
-    }
-  }
-}
-
-if(debugoption==true){
-ObjectSetText(Symbol()+"lotesop","GLotes -> LOPC: "+lotesposicionc+" LOPV: "+lotesposicionv,7,NULL,Orange);
-ObjectSet(Symbol()+"lotesop",OBJPROP_CORNER,0);
-ObjectSet(Symbol()+"lotesop",OBJPROP_XDISTANCE,15);
-ObjectSet(Symbol()+"lotesop",OBJPROP_YDISTANCE,100);
-}
-
     //------------------------------------------------------------------
-    // ENVIO OPERACIONES
+    // APERTURA
     //------------------------------------------------------------------
 
 // Si el triger de sistema es enviado, se coteja con riesgo minimo,
