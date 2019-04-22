@@ -116,6 +116,8 @@ double minpipsC=10;
 int minpos=2;
 int lotofpos=7;
 ushort sep=StringGetCharacter(":",0);
+ushort seprow=StringGetCharacter(";",0);
+
 
 //if(Digits==3||Digits==5)point_compat=10;
 //+------------------------------------------------------------------+
@@ -412,10 +414,6 @@ if(s1==true){
 //APERTURA - CIERRE - GESTIÓN LOTES - BAHAVIOUR
 //------------------------------------------------------------------
 
-//------------------------------------------------------------------
-// BEHAVIOUR
-//------------------------------------------------------------------
-
 // Primero se cataloga una operacion como riesgosa o no, en funcion a parametros como, tiempo, inversion,
 // probabilidad segun sistemas y demas se da una nota de riesgo.
 //
@@ -434,13 +432,15 @@ if(s1==true){
 
 double RiskBehavior=0;
 integer SegundosElapsed=0;
+string FileDBarchivos=commentID+".eakdb";
+string FDBread1r="0:0;";
 
 for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
   OrderSelect(cnta1,SELECT_BY_POS,MODE_TRADES);
   if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
     SegundosElapsed=TimeCurrent()-OrderOpenTime();//tiempo en segundos
 
-    if(FileIsExist("S1.txt")){ //aqui se va a sacar solo el archivo info de la operacion en especial.
+    if(FileIsExist(FileDBarchivos)){ //aqui se va a sacar solo el archivo info de la operacion en especial.
       //aqui tiene que dar info del archivo.
       //RIESGO NOTA
       if(SegundosElapsed>Tiempomedioporoperacion){
@@ -460,17 +460,55 @@ for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
     //------------------------------------------------------------------
 
 
-      if(RiskBehavior<50){//Riesgo controlado, cierre normal.
+if(FileIsExist(FileDBarchivos)){
+  string FDBread1 = FileOpen(FileDBarchivos,FILE_READ);
+  if(FDBread1a==INVALID_HANDLE){
+  printf("FDBread1 1");
+  }else{
+  string FDBread1r = FileReadString(FDBread1);
+  FileClose(FDBread1);
+  }
+}
+
+
+
+      if(RiskBehavior<=50){//Riesgo controlado, cierre normal.
       //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-    }else{
+
+      string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
+       if(Fdb1==INVALID_HANDLE){
+      printf("Fdb1 1");
+      }else{
+        string Fdb1w = FDBread1r+profitordersC+":"+TimeCurrent()";"; //cada una de estas lineas se añade lo nuevo.
+                FileWrite(Fdb1,Fdb1w);
+                FileClose(Fdb1);
+         }
+    }
+
+    if(RiskBehavior>50){
       //Riesgo alto,
       if(OrderProfit()>0){
         //Riesgo alto pero hay beneficios. Se sigue con la estrategia. Cierre normal
         //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-
+        string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
+         if(Fdb1==INVALID_HANDLE){
+        printf("Fdb1 1");
+        }else{
+          string Fdb1w = FDBread1r+profitordersC+":"+TimeCurrent()";";
+                  FileWrite(Fdb1,Fdb1w);
+                  FileClose(Fdb1);
+           }
       }else{
         //Se cierra siguiendo Cierre normal o cierre de la estrategia 1ra.
         //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
+        string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
+         if(Fdb1==INVALID_HANDLE){
+        printf("Fdb1 1");
+        }else{
+          string Fdb1w = FDBread1r+profitordersC+":"+TimeCurrent()";";
+                  FileWrite(Fdb1,Fdb1w);
+                  FileClose(Fdb1);
+           }
       }
     }
     //--------------------------------------------------------
@@ -479,18 +517,66 @@ for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
 
 
 
+//----------------------------------------------------------
+//BEHAVIOUR
+//----------------------------------------------------------
+string behaviorrow[],behavioritem[],control;
+integer cntrowbehavior=0;
+integer ticketitem=0;
+double riesgoitem=0;
+integer Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2;
+double profitmediobehavior,Profitmedioporoperacion2;
+if(FileIsExist(FileDBarchivos)){
+  string behavior1read = FileOpen(FileDBarchivos,FILE_READ);
+  if(behavior1read==INVALID_HANDLE){
+  printf("behavior1read 1");
+  }else{
+  string behavior1readall = FileReadString(behavior1read);
+  FileClose(behavior1read);
+  }
+  StringSplit(behavior1readall,seprow,behaviorrow);
+  cntrowbehavior=ArraySize(behaviorrow);
+
+  //-----------------------------------------------------------
+  //
+  // Se acceden a los archivos de cada sistema, se verifica si hay mas de x operaciones
+  // si hay mas, se elimina del archivo la op 1. con un search and replace.
+  //
+  //-----------------------------------------------------------
+
+if(cntrowbehavior>100){
+  control=StringReplace(behavior1readall,behaviorrow[0],"");
+  control+=StringReplace(behavior1readall,behaviorrow[1],"");
+    string Fdb2 = FileOpen(FileDBarchivos,FILE_WRITE);
+     if(Fdb2==INVALID_HANDLE){
+    printf("Fdb2 1");
+    }else{
+      string Fdb2w = behavior1readall;
+              FileWrite(Fdb2,Fdb2w);
+              FileClose(Fdb2);
+       }
+}
+//aqui se sacarán datos en claro, como el profit medio por operacion (por sistema), mediante el ticket.
+for(int cntb1=0;cntb1<cntrowbehavior;cntb1++){
+StringSplit(behaviorrow[cntb1],sep,behavioritem);
+ticketitem=behavioritem[0];
+riesgoitem=behavioritem[1];
+if(OrderSelect(ticketitem,SELECT_BY_TICKET)==true){
+Tiempooperacionbehavior=OrderCloseTime()-OrderOpenTime();
+tiempomedio1=tiempomedio1+Tiempooperacionbehavior;
+profitmediobehavior=profitmediobehavior+OrderProfit();
+}
+
+Tiempomedioporoperacion2=tiempomedio1/cntrowbehavior;
+Profitmedioporoperacion2=profitmediobehabior/cntrowbehavior;
+
+}//fin for
 
 
 
 
+}
 
-
-//-----------------------------------------------------------
-//
-// Se acceden a los archivos de cada sistema, se verifica si hay mas de x operaciones
-// si hay mas, se elimina del archivo la op 1. con un search and replace.
-//
-//-----------------------------------------------------------
 
 
 
