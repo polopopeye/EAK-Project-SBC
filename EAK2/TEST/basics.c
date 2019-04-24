@@ -23,7 +23,7 @@ string commentID="error";
  bool cogindv2=true;
 
 extern string GESTIONLOTES="METODO 1 MARTINGALE, METODO 2 EN CONSTRUCCION --------------";
- int gestionlotesmethod=3;
+ int gestionlotesmethod=4;
 extern double lotesinicial=0.01; //first lot
 
  string GRID="POSITION FIJA EN PIPS A PARTIR DE UNA OPERACION ABIERTA";
@@ -116,7 +116,7 @@ double minpipsC=10;
 int minpos=2;
 int lotofpos=7;
 ushort sep=StringGetCharacter(":",0);
-ushort seprow=StringGetCharacter(";",0);
+ushort seprow=StringGetCharacter("_",0);
 
 
 //if(Digits==3||Digits==5)point_compat=10;
@@ -347,6 +347,7 @@ double inflacion=2;//1+3.14159^0
 double priceima = Ask; //double priceima = iMA(Symbol(),PERIOD_M1,1,0,MODE_EMA,PRICE_MEDIAN,0);
 int Tiempomedioporoperacion=0;
 int Lotesmedioporoperacion=0;
+int cierreop=0;
 //ESTRATEGIA1 - S1
 bool s1=true;
 bool s2=true;
@@ -359,7 +360,7 @@ bool s2=true;
 //double expectedvalue1*p+expectedvalue2*(1-p)=priceima;
 
 if(s1==true){
-  int Tiempomedioporoperacion=14400;
+  Tiempomedioporoperacion=14400;
   double PRcogB=0;
   double PRcogS=0;
   double CcogB = 1;
@@ -375,6 +376,7 @@ if(s1==true){
     commentID="S1";
   PRcogS=0.60;
   op=2;
+  cierreop=1;
   expectedvalue1=cognumberd;
   expectedvalue2=cognumbera*1.1;
   interestrates=expectedvalue1/priceima;
@@ -392,9 +394,10 @@ if(s1==true){
     commentID="S1";
   PRcogB=0.60;
   op=1;
+  cierreop=2;
   expectedvalue1=cognumbera;
   expectedvalue2=cognumberd*1.1;
-  interestrates=expectedvalue/priceima;
+  interestrates=expectedvalue1/priceima;
   riesgoporcrecimiento=interestrates/inflacion;
   riesgo=MathSqrt(riesgoporcrecimiento);
   probabilidad=(priceima-expectedvalue2)/(expectedvalue1-expectedvalue2);
@@ -429,14 +432,17 @@ if(s1==true){
 // A traves de la información almacenada se sacara datos de comportamiento de cada sistema mediante un for
 // y un exist file.
 
-
+string FileDBarchivos;
 double RiskBehavior=0;
-integer SegundosElapsed=0;
-string FileDBarchivos=commentID+".eakdb";
-string FDBread1r="0:0;";
-
+int SegundosElapsed=0;
+string FDBread1r;
+string nuevosdatos;
+bool cierre=true;
 for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
   OrderSelect(cnta1,SELECT_BY_POS,MODE_TRADES);
+   nuevosdatos=OrderTicket()+":c:0_";
+   FileDBarchivos=OrderComment()+".eakdb";
+
   if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
     SegundosElapsed=TimeCurrent()-OrderOpenTime();//tiempo en segundos
 
@@ -460,29 +466,21 @@ for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
     //------------------------------------------------------------------
 
 
-if(FileIsExist(FileDBarchivos)){
-  string FDBread1 = FileOpen(FileDBarchivos,FILE_READ);
-  if(FDBread1a==INVALID_HANDLE){
-  printf("FDBread1 1");
-  }else{
-  string FDBread1r = FileReadString(FDBread1);
-  FileClose(FDBread1);
-  }
-}
-
-
 
       if(RiskBehavior<=50){//Riesgo controlado, cierre normal.
       //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
 
-      string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
-       if(Fdb1==INVALID_HANDLE){
-      printf("Fdb1 1");
-      }else{
-        string Fdb1w = FDBread1r+profitordersC+":"+TimeCurrent()";"; //cada una de estas lineas se añade lo nuevo.
-                FileWrite(Fdb1,Fdb1w);
-                FileClose(Fdb1);
-         }
+      if(OrderType()==OP_BUY&&cierreop==1&&OrderComment()==commentID){
+        if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
+          printf("Cerrado y guardado Compra");
+
+        }
+      }
+      if(OrderType()==OP_SELL&&cierreop==2&&OrderComment()==commentID){
+        if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
+          printf("Cerrado y guardado Venta");
+        }
+      }
     }
 
     if(RiskBehavior>50){
@@ -490,30 +488,71 @@ if(FileIsExist(FileDBarchivos)){
       if(OrderProfit()>0){
         //Riesgo alto pero hay beneficios. Se sigue con la estrategia. Cierre normal
         //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-        string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
-         if(Fdb1==INVALID_HANDLE){
-        printf("Fdb1 1");
-        }else{
-          string Fdb1w = FDBread1r+profitordersC+":"+TimeCurrent()";";
-                  FileWrite(Fdb1,Fdb1w);
-                  FileClose(Fdb1);
-           }
+        if(OrderType()==OP_BUY&&cierreop==1&&OrderComment()==commentID){
+          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
+            printf("Cerrado y guardado Compra");
+
+          }
+        }
+        if(OrderType()==OP_SELL&&cierreop==2&&OrderComment()==commentID){
+          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
+            printf("Cerrado y guardado Venta");
+          }
+        }
+
       }else{
         //Se cierra siguiendo Cierre normal o cierre de la estrategia 1ra.
         //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-        string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
-         if(Fdb1==INVALID_HANDLE){
-        printf("Fdb1 1");
-        }else{
-          string Fdb1w = FDBread1r+profitordersC+":"+TimeCurrent()";";
-                  FileWrite(Fdb1,Fdb1w);
-                  FileClose(Fdb1);
-           }
+        if(OrderType()==OP_BUY&&cierreop==1&&OrderComment()==commentID){
+          nuevosdatos=OrderTicket()+":c:0_";
+          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
+            printf("Cerrado y guardado Compra");
+
+          }
+        }
+        if(OrderType()==OP_SELL&&cierreop==2&&OrderComment()==commentID){
+          nuevosdatos=OrderTicket()+":v:0_";
+          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
+            printf("Cerrado y guardado Venta");
+          }
+        }
       }
     }
     //--------------------------------------------------------
   }//Fin If
+
+
+
+  //----------------------------------------------------------
+  //DBARCHIVOS
+  //----------------------------------------------------------
+  //Primero observa si ya hay archivos, si los hay mantener los datos anteriores y
+  //guardarlos en una variable.
+  if(FileIsExist(FileDBarchivos)){
+    string FDBread1 = FileOpen(FileDBarchivos,FILE_READ);
+    if(FDBread1==INVALID_HANDLE){
+    printf("FDBread1 1");
+    }else{
+     FDBread1r = FileReadString(FDBread1);
+    FileClose(FDBread1);
+    }
+  }
+
 }//Fin For
+
+//Añadir los datos anteriores y escrivir nuevos datos.
+if(cierre==true){
+  string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
+   if(Fdb1==INVALID_HANDLE){
+  printf("Fdb1 1");
+  }else{
+    string Fdb1w = FDBread1r+nuevosdatos;
+            FileWrite(Fdb1,Fdb1w);
+            FileClose(Fdb1);
+     }
+}
+
+
 
 
 
@@ -521,10 +560,10 @@ if(FileIsExist(FileDBarchivos)){
 //BEHAVIOUR
 //----------------------------------------------------------
 string behaviorrow[],behavioritem[],control;
-integer cntrowbehavior=0;
-integer ticketitem=0;
+int cntrowbehavior=0;
+int ticketitem=0;
 double riesgoitem=0;
-integer Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2;
+int Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2;
 double profitmediobehavior,Profitmedioporoperacion2;
 if(FileIsExist(FileDBarchivos)){
   string behavior1read = FileOpen(FileDBarchivos,FILE_READ);
@@ -566,11 +605,11 @@ Tiempooperacionbehavior=OrderCloseTime()-OrderOpenTime();
 tiempomedio1=tiempomedio1+Tiempooperacionbehavior;
 profitmediobehavior=profitmediobehavior+OrderProfit();
 }
+}//fin for
 
 Tiempomedioporoperacion2=tiempomedio1/cntrowbehavior;
-Profitmedioporoperacion2=profitmediobehabior/cntrowbehavior;
-
-}//fin for
+Profitmedioporoperacion2=profitmediobehavior/cntrowbehavior;
+//Aqui se va a poner a competir los sistemas.
 
 
 
@@ -644,6 +683,15 @@ if(gestionlotesmethod==4){
 //en funcion a lo permitido, para poder hacer mas estadisticas.
 
 
+//la idea es que el sistema invierta en los primeros sistemas y minimamanete en los malos.
+//el mejor sistema tendra un 3, un mal sistema tendra un 1 y uno normal un 2.
+
+
+lotesposicionc=0.1;
+lotesposicionv=0.1;
+
+
+
 }
 
 
@@ -660,16 +708,16 @@ if(gestionlotesmethod==4){
 
 
 if(spreadvalue<maxspread){
-  if(posicionesabiertasrobotc==0&&op=1){
+  if(posicionesabiertasrobotc==0&&op==1){
     OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue);
   }
-  if(posicionesabiertasrobotc>0&&filter1c&&op=1){
+  if(posicionesabiertasrobotc>0&&filter1c==1&&op==1){
     OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue);
   }
-  if(posicionesabiertasrobotv==0&&op=2){
+  if(posicionesabiertasrobotv==0&&op==2){
     OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red);
   }
-  if(posicionesabiertasrobotv>0&&filter1v&&op=2){
+  if(posicionesabiertasrobotv>0&&filter1v==1&&op==2){
     OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red);
   }
 }
