@@ -457,14 +457,16 @@ if(s2==true){
 // A traves de la información almacenada se sacara datos de comportamiento de cada sistema mediante un for
 // y un exist file.
 
-string FileDBarchivos;
-double RiskBehavior=0;
+string FileDBarchivos, FileDBarchivos2,FDBread4r[];
+double RiskBehavior=0,nota;
+double FProfitBehavior=0;
 int SegundosElapsed=0;
 string FDBread1r;
 string nuevosdatos;
 for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
   OrderSelect(cnta1,SELECT_BY_POS,MODE_TRADES);
-   FileDBarchivos=OrderComment()+Symbol()+".eakdb";
+  FileDBarchivos=OrderComment()+Symbol()+".eakdb";
+  FileDBarchivos2="R"+OrderComment()+Symbol()+".eakdb";
    bool cierre=false;
 
   if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
@@ -489,67 +491,124 @@ for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
     // CIERRE
     //------------------------------------------------------------------
 
+if(FileIsExist(FileDBarchivos2)){
+  string FDBread3 = FileOpen(FileDBarchivos2,FILE_READ);
+  if(FDBread3==INVALID_HANDLE){
+  printf("FDBread3 1");
+  }else{
+   string FDBread3r = FileReadString(FDBread3);
+  FileClose(FDBread3);
+  }
+  StringSplit(FDBread3r,sep,FDBread4r);
+  RiskBehavior=FDBread4r[1];
+FProfitBehavior=FDBread4r[0];
+}
+double TiempoElapsedBehavior=OrderCloseTime()-OrderOpenTime();
+double FProfitBehavior2=(OrderProfit()/OrderLots())/TiempoElapsedBehavior;
 
-
-      if(RiskBehavior<=50){//Riesgo controlado, cierre normal.
+      if(RiskBehavior<=0.50&&OrderComment()==commentID){//Riesgo controlado, cierre normal.
       //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
 
-      if(OrderType()==OP_BUY&&cierreop==1&&OrderComment()==commentID){
+      if(OrderType()==OP_BUY&&cierreop==1){
 
         if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
           printf("Cerrado y guardado Compra");
           cierre=true;
-
+          if(FProfitBehavior2>FProfitBehavior){
+            nota=6;
+          }
+          if(OrderProfit()>0){
+            nota++;
+          }else{
+            nota--;
+          }
         }
       }
-      if(OrderType()==OP_SELL&&cierreop==2&&OrderComment()==commentID){
+      if(OrderType()==OP_SELL&&cierreop==2){
         if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
           printf("Cerrado y guardado Venta");
           cierre=true;
-
+          if(FProfitBehavior2>FProfitBehavior){
+            nota=6;
+          }
+          if(OrderProfit()>0){
+            nota++;
+          }else{
+            nota--;
+          }
         }
       }
     }
 
-    if(RiskBehavior>50){
+    if(RiskBehavior>0.50&&OrderComment()==commentID){
       //Riesgo alto,
       if(OrderProfit()>0){
         //Riesgo alto pero hay beneficios. Se sigue con la estrategia. Cierre normal
         //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-        if(OrderType()==OP_BUY&&cierreop==1&&OrderComment()==commentID){
+        if(OrderType()==OP_BUY&&cierreop==1){
           if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
             printf("Cerrado y guardado Compra");
             cierre=true;
-
+            if(FProfitBehavior2>FProfitBehavior){
+              nota=4;
+            }
+            if(OrderProfit()>0){
+              nota++;
+            }else{
+              nota--;
+            }
           }
         }
-        if(OrderType()==OP_SELL&&cierreop==2&&OrderComment()==commentID){
+        if(OrderType()==OP_SELL&&cierreop==2){
           if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
             printf("Cerrado y guardado Venta");
             cierre=true;
-
+            if(FProfitBehavior2>FProfitBehavior){
+              nota=4;
+            }
+            if(OrderProfit()>0){
+              nota++;
+            }else{
+              nota--;
+            }
           }
         }
 
       }else{
         //Se cierra siguiendo Cierre normal o cierre de la estrategia 1ra.
         //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-        if(OrderType()==OP_BUY&&cierreop==1&&OrderComment()==commentID){
+        if(OrderType()==OP_BUY&&cierreop==1){
           if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
             printf("Cerrado y guardado Compra");
             cierre=true;
-
+            if(FProfitBehavior2>FProfitBehavior){
+              nota=4;
+            }
+            if(OrderProfit()>0){
+              nota++;
+            }else{
+              nota--;
+            }
           }
         }
-        if(OrderType()==OP_SELL&&cierreop==2&&OrderComment()==commentID){
+        if(OrderType()==OP_SELL&&cierreop==2){
           if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
             printf("Cerrado y guardado Venta");
             cierre=true;
-
+            if(FProfitBehavior2>FProfitBehavior){
+              nota=4;
+            }
+            if(OrderProfit()>0){
+              nota++;
+            }else{
+              nota--;
+            }
           }
         }
-      }
-    }
+          }
+        }
+
+
     //--------------------------------------------------------
   }//Fin If
 
@@ -573,7 +632,7 @@ if(OrderComment()==commentID){
 
   //Añadir los datos anteriores y escrivir nuevos datos.
   if(cierre==true){
-    nuevosdatos=OrderTicket()+":"+riesgo+":"+probabilidad+"_";
+    nuevosdatos=OrderTicket()+":"+riesgo+":"+probabilidad+":"+nota+"_";
     string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
      if(Fdb1==INVALID_HANDLE){
     printf("Fdb1 1");
@@ -606,8 +665,8 @@ int cntrowbehavior=0;
 int ticketitem=0;
 double riesgoitem=0;
 double probabilidaditem=0;
-double Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2,riesgomedio1,probabilidadmedia1;
-double profitmediobehavior,Profitmedioporoperacion2, factorprofit,riesgomedioporoperacion2,probabilidadmediaporoperacion2;
+double Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2,riesgomedio1,probabilidadmedia1,Lotesmedioporoperacionbehaviour,notaitem,notamedia1,notamedia2;
+double profitmediobehavior,Profitmedioporoperacion2, factorprofit,riesgomedioporoperacion2,probabilidadmediaporoperacion2,Lotesmedioporoperacion2behaviour;
 if(FileIsExist(FileDBarchivos)){
   string behavior1read = FileOpen(FileDBarchivos,FILE_READ);
   if(behavior1read==INVALID_HANDLE){
@@ -645,20 +704,24 @@ StringSplit(behaviorrow[cntb1],sep,behavioritem);
 ticketitem=behavioritem[0];
 riesgoitem=behavioritem[1];
 probabilidaditem=behavioritem[2];
+notaitem=behavioritem[3];
 //printf("ticket"+ticketitem);
 
 if(OrderSelect(ticketitem,SELECT_BY_TICKET)==true){
+Lotesmedioporoperacionbehaviour=Lotesmedioporoperacionbehaviour+OrderLots();
 Tiempooperacionbehavior=OrderCloseTime()-OrderOpenTime();
 tiempomedio1=tiempomedio1+Tiempooperacionbehavior;
 profitmediobehavior=profitmediobehavior+OrderProfit();
 riesgomedio1=riesgomedio1+riesgoitem;
 probabilidadmedia1=probabilidadmedia1+probabilidaditem;
+notamedia1=notamedia1+notaitem;
 }
 }//fin for
-
+notamedia2=notamedia1/cntrowbehavior;
+Lotesmedioporoperacion2behaviour=Lotesmedioporoperacionbehaviour/cntrowbehavior;
 Tiempomedioporoperacion2=tiempomedio1/cntrowbehavior;
 Profitmedioporoperacion2=profitmediobehavior/cntrowbehavior;
-factorprofit=Profitmedioporoperacion2/Tiempomedioporoperacion2;
+factorprofit=(Profitmedioporoperacion2/Lotesmedioporoperacion2behaviour)/Tiempomedioporoperacion2;
 riesgomedioporoperacion2=riesgomedio1/cntrowbehavior;
 probabilidadmediaporoperacion2=probabilidadmedia1/cntrowbehavior;
 
@@ -671,7 +734,7 @@ if(cierre==true){
    if(Rdb2==INVALID_HANDLE){
   printf("Rdb2 1");
   }else{
-    string Rdb2w = factorprofit+":"+riesgomedioporoperacion2+":"+probabilidadmediaporoperacion2;
+    string Rdb2w = factorprofit+":"+riesgomedioporoperacion2+":"+probabilidadmediaporoperacion2+":"+notamedia2;
             FileWrite(Rdb2,Rdb2w);
             FileClose(Rdb2);
      }
@@ -689,6 +752,7 @@ string ResultarrayS[];
 double Itemsistem1[10];
 double Itemsistem2[10];
 double Itemsistem3[10];
+double Itemsistem4[10];
 
 for(int cntrs=0;cntrs<=activadasestrategias;cntrs++){
 string rsfile="RS"+cntrs+Symbol()+".eakdb";
@@ -704,6 +768,7 @@ if(FileIsExist(rsfile)){
   Itemsistem1[cntrs]=ResultarrayS[0];
   Itemsistem2[cntrs]=ResultarrayS[1];
   Itemsistem3[cntrs]=ResultarrayS[2];
+  Itemsistem4[cntrs]=ResultarrayS[3];
   // Rbehavior1read2[cntrs,0]=ResultarrayS[0];
   // Rbehavior1read2[cntrs,1]=ResultarrayS[1];
 }
@@ -716,8 +781,10 @@ int riesgoMBad = ArrayMaximum(Itemsistem2,activadasestrategias,1);
 int riesgoMB = ArrayMinimum(Itemsistem2,activadasestrategias,1);
 int probabilidadMB = ArrayMaximum(Itemsistem3,activadasestrategias,1);
 int probabilidadMBad = ArrayMinimum(Itemsistem3,activadasestrategias,1);
+int notaMB = ArrayMaximum(Itemsistem4,activadasestrategias,1);
+int notaMBad = ArrayMinimum(Itemsistem4,activadasestrategias,1);
 
-printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB);
+printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB+" Nota: "+notaMB+"("+Itemsistem4[notaMB]+")");
 // printf("Itemsistem1 1: "+Itemsistem2[1]);
 // printf("Itemsistem1 2: "+Itemsistem2[2]);
 
