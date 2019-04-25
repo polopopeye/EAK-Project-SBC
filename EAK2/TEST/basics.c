@@ -410,6 +410,14 @@ if(s2==true){
     commentID="S2";
     op=1;
     cierreop=2;
+    expectedvalue1=semaforindv2B*1.2;
+    expectedvalue2=semaforindv2B/1.2;
+    interestrates=expectedvalue1/priceima;
+    riesgoporcrecimiento=interestrates/inflacion;
+    riesgo=MathSqrt(riesgoporcrecimiento);
+    probabilidad=(priceima-expectedvalue2)/(expectedvalue1-expectedvalue2);
+
+
   }
   if(semaforindv2S==NULL||semaforindv2S==EMPTY_VALUE){
     //PRsemaforV=0.6;
@@ -418,6 +426,12 @@ if(s2==true){
     commentID="S2";
     op=2;
     cierreop=1;
+    expectedvalue1=semaforindv2S*1.2;
+    expectedvalue2=semaforindv2S/1.2;
+    interestrates=expectedvalue1/priceima;
+    riesgoporcrecimiento=interestrates/inflacion;
+    riesgo=MathSqrt(riesgoporcrecimiento);
+    probabilidad=(priceima-expectedvalue2)/(expectedvalue1-expectedvalue2);
   }
 }
 
@@ -559,7 +573,7 @@ if(OrderComment()==commentID){
 
   //Añadir los datos anteriores y escrivir nuevos datos.
   if(cierre==true){
-    nuevosdatos=OrderTicket()+":"+OrderComment()+":0_";
+    nuevosdatos=OrderTicket()+":"+riesgo+":"+probabilidad+"_";
     string Fdb1 = FileOpen(FileDBarchivos,FILE_WRITE);
      if(Fdb1==INVALID_HANDLE){
     printf("Fdb1 1");
@@ -591,8 +605,9 @@ string behaviorrow[],behavioritem[];
 int cntrowbehavior=0;
 int ticketitem=0;
 double riesgoitem=0;
-int Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2;
-double profitmediobehavior,Profitmedioporoperacion2;
+double probabilidaditem=0;
+double Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2,riesgomedio1,probabilidadmedia1;
+double profitmediobehavior,Profitmedioporoperacion2, factorprofit,riesgomedioporoperacion2,probabilidadmediaporoperacion2;
 if(FileIsExist(FileDBarchivos)){
   string behavior1read = FileOpen(FileDBarchivos,FILE_READ);
   if(behavior1read==INVALID_HANDLE){
@@ -628,18 +643,25 @@ string borrar=behaviorrow[0]+"_";
 for(int cntb1=0;cntb1<cntrowbehavior;cntb1++){
 StringSplit(behaviorrow[cntb1],sep,behavioritem);
 ticketitem=behavioritem[0];
+riesgoitem=behavioritem[1];
+probabilidaditem=behavioritem[2];
 //printf("ticket"+ticketitem);
 
-riesgoitem=behavioritem[1];
 if(OrderSelect(ticketitem,SELECT_BY_TICKET)==true){
 Tiempooperacionbehavior=OrderCloseTime()-OrderOpenTime();
 tiempomedio1=tiempomedio1+Tiempooperacionbehavior;
 profitmediobehavior=profitmediobehavior+OrderProfit();
+riesgomedio1=riesgomedio1+riesgoitem;
+probabilidadmedia1=probabilidadmedia1+probabilidaditem;
 }
 }//fin for
 
 Tiempomedioporoperacion2=tiempomedio1/cntrowbehavior;
 Profitmedioporoperacion2=profitmediobehavior/cntrowbehavior;
+factorprofit=Profitmedioporoperacion2/Tiempomedioporoperacion2;
+riesgomedioporoperacion2=riesgomedio1/cntrowbehavior;
+probabilidadmediaporoperacion2=probabilidadmedia1/cntrowbehavior;
+
 //-----------------------------------------------------------
 // Rarchivos Sistema, se guardan los datos en cada actualizacion
 //-----------------------------------------------------------
@@ -649,7 +671,7 @@ if(cierre==true){
    if(Rdb2==INVALID_HANDLE){
   printf("Rdb2 1");
   }else{
-    string Rdb2w = Tiempomedioporoperacion2+":"+Profitmedioporoperacion2;
+    string Rdb2w = factorprofit+":"+riesgomedioporoperacion2+":"+probabilidadmediaporoperacion2;
             FileWrite(Rdb2,Rdb2w);
             FileClose(Rdb2);
      }
@@ -666,6 +688,7 @@ if(cierre==true){
 string ResultarrayS[];
 double Itemsistem1[10];
 double Itemsistem2[10];
+double Itemsistem3[10];
 
 for(int cntrs=0;cntrs<=activadasestrategias;cntrs++){
 string rsfile="RS"+cntrs+Symbol()+".eakdb";
@@ -680,18 +703,23 @@ if(FileIsExist(rsfile)){
   StringSplit(Readsistembehavior,sep,ResultarrayS);
   Itemsistem1[cntrs]=ResultarrayS[0];
   Itemsistem2[cntrs]=ResultarrayS[1];
+  Itemsistem3[cntrs]=ResultarrayS[2];
   // Rbehavior1read2[cntrs,0]=ResultarrayS[0];
   // Rbehavior1read2[cntrs,1]=ResultarrayS[1];
 }
 }
 
 
-int tiempoMB = ArrayMaximum(Itemsistem1,WHOLE_ARRAY,0);
+int profitMBad = ArrayMinimum(Itemsistem1,activadasestrategias,1);
+int profitMB = ArrayMaximum(Itemsistem1,activadasestrategias,1);
+int riesgoMBad = ArrayMaximum(Itemsistem2,activadasestrategias,1);
+int riesgoMB = ArrayMinimum(Itemsistem2,activadasestrategias,1);
+int probabilidadMB = ArrayMaximum(Itemsistem3,activadasestrategias,1);
+int probabilidadMBad = ArrayMinimum(Itemsistem3,activadasestrategias,1);
 
-
-printf("tiempoMB: "+tiempoMB);
- printf("Itemsistem1 1: "+Itemsistem1[1]);
- printf("Itemsistem1 2: "+Itemsistem1[2]);
+printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB);
+// printf("Itemsistem1 1: "+Itemsistem2[1]);
+// printf("Itemsistem1 2: "+Itemsistem2[2]);
 
 
 
