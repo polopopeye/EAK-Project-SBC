@@ -24,7 +24,7 @@ string commentID="error";
 
 extern string GESTIONLOTES="METODO 1 MARTINGALE, METODO 2 EN CONSTRUCCION --------------";
  int gestionlotesmethod=4;
-extern double lotesinicial=0.01; //first lot
+extern double lotesinicial=0.1; //first lot
 
  string GRID="POSITION FIJA EN PIPS A PARTIR DE UNA OPERACION ABIERTA";
  bool filternegativeopenorders=false;
@@ -734,7 +734,7 @@ if(cierre==true){
    if(Rdb2==INVALID_HANDLE){
   printf("Rdb2 1");
   }else{
-    string Rdb2w = factorprofit+":"+riesgomedioporoperacion2+":"+probabilidadmediaporoperacion2+":"+notamedia2;
+    string Rdb2w = factorprofit+":"+riesgomedioporoperacion2+":"+probabilidadmediaporoperacion2+":"+notamedia2+":"+Tiempomedioporoperacion2;
             FileWrite(Rdb2,Rdb2w);
             FileClose(Rdb2);
      }
@@ -753,6 +753,7 @@ double Itemsistem1[10];
 double Itemsistem2[10];
 double Itemsistem3[10];
 double Itemsistem4[10];
+double Itemsistem5[10];
 
 for(int cntrs=0;cntrs<=activadasestrategias;cntrs++){
 string rsfile="RS"+cntrs+Symbol()+".eakdb";
@@ -769,6 +770,7 @@ if(FileIsExist(rsfile)){
   Itemsistem2[cntrs]=ResultarrayS[1];
   Itemsistem3[cntrs]=ResultarrayS[2];
   Itemsistem4[cntrs]=ResultarrayS[3];
+  Itemsistem5[cntrs]=ResultarrayS[4];
   // Rbehavior1read2[cntrs,0]=ResultarrayS[0];
   // Rbehavior1read2[cntrs,1]=ResultarrayS[1];
 }
@@ -783,6 +785,8 @@ int probabilidadMB = ArrayMaximum(Itemsistem3,activadasestrategias,1);
 int probabilidadMBad = ArrayMinimum(Itemsistem3,activadasestrategias,1);
 int notaMB = ArrayMaximum(Itemsistem4,activadasestrategias,1);
 int notaMBad = ArrayMinimum(Itemsistem4,activadasestrategias,1);
+int tiempoMBad = ArrayMaximum(Itemsistem5,activadasestrategias,1);
+int tiempoMB = ArrayMinimum(Itemsistem5,activadasestrategias,1);
 
 printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB+" Nota: "+notaMB+"("+Itemsistem4[notaMB]+")");
 // printf("Itemsistem1 1: "+Itemsistem2[1]);
@@ -888,21 +892,82 @@ printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB+" N
 // en funciona a las probabilidades de perdidas se observa un capital optimo. y riesgo de default que
 // ayudara a definir el capital medio, minimo y maximo de inversion recomendado.
 
-double lotesposicionc=0;
-double lotesposicionv=0;
+double lotesposicionc=lotesinicial;
+double lotesposicionv=lotesinicial;
 
 if(gestionlotesmethod==4){
 //Se obeserva el BEHAVIOR y segun el riesgo, probabilidad, rentabilidad del sistema, lotes inicial,
 //Existe lotes maximo conforme a un porcentaje del capital maximo para invertir. Segundo lotes minimo.
 //en funcion a lo permitido, para poder hacer mas estadisticas.
+//tiempo promedio, cuanto mayor tiempo mas riesgo.
+
+//riesgo,probabilidad,nota, de operaciones actuales
+
+string MejorS="S"+notaMB;
+string PeorS="S"+notaMBad;
+string MejorPfS="S"+profitMB;//profit
+string PeorPfS="S"+profitMBad;
+string MejorPrS="S"+probabilidadMB;//Probabilidad
+string PeorPrS="S"+probabilidadMBad;
+string MejorRiS="S"+riesgoMB;//Riesgo
+string PeorRiS="S"+riesgoMBad;
+string MejorTiS="S"+tiempoMB;//tiempo
+string PeorTiS="S"+tiempoMBad;
+//printf(MejorS+PeorS);
+
+if(riesgo<0.5){
+  lotesposicionc=lotesposicionc*1.25;
+  lotesposicionv=lotesposicionc*1.25;
+}
+if(probabilidad>0.5){
+  lotesposicionc=lotesposicionc*1.25;
+  lotesposicionv=lotesposicionv*1.25;
+}
+if(commentID==MejorPrS){
+  lotesposicionc=lotesposicionc*1.25;
+  lotesposicionv=lotesposicionv*1.25;
+}
+if(commentID==PeorPrS){
+  lotesposicionc=lotesposicionc/1.25;
+  lotesposicionv=lotesposicionv/1.25;
+}
+if(commentID==MejorPfS){
+  lotesposicionc=lotesposicionc*1.25;
+  lotesposicionv=lotesposicionv*1.25;
+}
+if(commentID==PeorPfS){
+  lotesposicionc=lotesposicionc/1.25;
+  lotesposicionv=lotesposicionv/1.25;
+}
+if(commentID==MejorRiS){
+  lotesposicionc=lotesposicionc*1.25;
+  lotesposicionv=lotesposicionv*1.25;
+}
+if(commentID==PeorRiS){
+  lotesposicionc=lotesposicionc/1.25;
+  lotesposicionv=lotesposicionv/1.25;
+}
+if(commentID==MejorS){
+  lotesposicionc=lotesposicionc*1.25;
+  lotesposicionv=lotesposicionv*1.25;
+}
+if(commentID==PeorS){
+  lotesposicionc=minlots;
+  lotesposicionv=minlots;
+}
+if(lotesposicionc<minlots){
+  lotesposicionc=minlots;
+}
+if(lotesposicionv<minlots){
+  lotesposicionv=minlots;
+}
+
+
 
 
 //la idea es que el sistema invierta en los primeros sistemas y minimamanete en los malos.
 //el mejor sistema tendra un 3, un mal sistema tendra un 1 y uno normal un 2.
 
-
-lotesposicionc=0.1;
-lotesposicionv=0.1;
 
 
 
