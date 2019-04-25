@@ -458,7 +458,7 @@ if(s2==true){
 // y un exist file.
 
 string FileDBarchivos, FileDBarchivos2,FDBread4r[];
-double RiskBehavior=0,nota;
+double RiskBehavior=0,nota=0,ProbabilidadBehavior,NotaBehavior,TiempoBehavior;
 double FProfitBehavior=0;
 int SegundosElapsed=0;
 string FDBread1r;
@@ -500,113 +500,49 @@ if(FileIsExist(FileDBarchivos2)){
   FileClose(FDBread3);
   }
   StringSplit(FDBread3r,sep,FDBread4r);
+  FProfitBehavior=FDBread4r[0];
   RiskBehavior=FDBread4r[1];
-FProfitBehavior=FDBread4r[0];
+  ProbabilidadBehavior=FDBread4r[2];
+  NotaBehavior=FDBread4r[3];
+  TiempoBehavior=FDBread4r[4];
 }
 double TiempoElapsedBehavior=OrderCloseTime()-OrderOpenTime();
 double FProfitBehavior2=(OrderProfit()/OrderLots())/TiempoElapsedBehavior;
 
-      if(RiskBehavior<=0.50&&OrderComment()==commentID){//Riesgo controlado, cierre normal.
-      //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
 
-      if(OrderType()==OP_BUY&&cierreop==1){
+// if(TiempoElapsedBehavior<TiempoBehavior){
+//   RiskBehavior=RiskBehavior/1.15;
+// }
+// if(TiempoElapsedBehavior>TiempoBehavior){
+//   RiskBehavior=RiskBehavior*1.15;
+// }
 
-        if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
-          printf("Cerrado y guardado Compra");
-          cierre=true;
-          if(FProfitBehavior2>FProfitBehavior){
-            nota=6;
-          }
-          if(OrderProfit()>0){
-            nota++;
-          }else{
-            nota--;
-          }
-        }
-      }
-      if(OrderType()==OP_SELL&&cierreop==2){
-        if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
-          printf("Cerrado y guardado Venta");
-          cierre=true;
-          if(FProfitBehavior2>FProfitBehavior){
-            nota=6;
-          }
-          if(OrderProfit()>0){
-            nota++;
-          }else{
-            nota--;
-          }
-        }
-      }
-    }
 
-    if(RiskBehavior>0.50&&OrderComment()==commentID){
-      //Riesgo alto,
-      if(OrderProfit()>0){
-        //Riesgo alto pero hay beneficios. Se sigue con la estrategia. Cierre normal
-        //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-        if(OrderType()==OP_BUY&&cierreop==1){
-          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
-            printf("Cerrado y guardado Compra");
-            cierre=true;
-            if(FProfitBehavior2>FProfitBehavior){
-              nota=4;
-            }
-            if(OrderProfit()>0){
-              nota++;
-            }else{
-              nota--;
-            }
-          }
-        }
-        if(OrderType()==OP_SELL&&cierreop==2){
-          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
-            printf("Cerrado y guardado Venta");
-            cierre=true;
-            if(FProfitBehavior2>FProfitBehavior){
-              nota=4;
-            }
-            if(OrderProfit()>0){
-              nota++;
-            }else{
-              nota--;
-            }
-          }
-        }
+if(OrderComment()==commentID){
+  if(FProfitBehavior2>=FProfitBehavior)nota++;
+  if(FProfitBehavior2<FProfitBehavior)nota--;
+  if(OrderProfit()>0)nota++;
+  if(OrderProfit()<0)nota--;
+  if(riesgo<RiskBehavior)nota++;
+  if(riesgo>RiskBehavior)nota--;
+  if(TiempoElapsedBehavior<TiempoBehavior)nota++;
+  if(TiempoElapsedBehavior>TiempoBehavior)nota--;
+  if(probabilidad>ProbabilidadBehavior)nota++;
+  if(probabilidad<ProbabilidadBehavior)nota--;
+if(OrderType()==OP_BUY&&cierreop==1){
+    cierre=true;
+    OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+}
+if(OrderType()==OP_SELL&&cierreop==2){
+    cierre=true;
+    OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+}
+}
 
-      }else{
-        //Se cierra siguiendo Cierre normal o cierre de la estrategia 1ra.
-        //->SE CREA ARCHIVO DE CIERRE ESPECIFICANDO DATOS PARA ESTADISTICA
-        if(OrderType()==OP_BUY&&cierreop==1){
-          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red)){
-            printf("Cerrado y guardado Compra");
-            cierre=true;
-            if(FProfitBehavior2>FProfitBehavior){
-              nota=4;
-            }
-            if(OrderProfit()>0){
-              nota++;
-            }else{
-              nota--;
-            }
-          }
-        }
-        if(OrderType()==OP_SELL&&cierreop==2){
-          if(OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue)){
-            printf("Cerrado y guardado Venta");
-            cierre=true;
-            if(FProfitBehavior2>FProfitBehavior){
-              nota=4;
-            }
-            if(OrderProfit()>0){
-              nota++;
-            }else{
-              nota--;
-            }
-          }
-        }
-          }
-        }
+
+
+
+
 
 
     //--------------------------------------------------------
