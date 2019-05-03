@@ -351,7 +351,8 @@ int cierreop=0;
 //ESTRATEGIA1 - S1
 bool s1=true;
 bool s2=true;
-int activadasestrategias=2;
+bool s3=true;
+int activadasestrategias=3;
 //----------- FORMULAS INTERESANTES ----------------//
 //double interestrates=expectedvalue1/priceima;
 //double interestrates=crecimiento*inflacion*riesgo;
@@ -400,6 +401,8 @@ if(s1==true){
 
 
 if(s2==true){
+  //Tiempomedioporoperacion=14400;
+
   double semaforindv2B = 0;
   semaforindv2B = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",50,100,200,4,1);
   double semaforindv2S = 0;
@@ -435,6 +438,22 @@ if(s2==true){
   }
 }
 
+
+if(s3==true){
+  //Tiempomedioporoperacion=14400;
+  int op2;
+  op2 = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",2,0);
+
+
+
+if(op2!=EMPTY_VALUE&&op2!=0){
+cierreop=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",5,0);
+commentID="S3";
+op=op2;
+riesgo = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",3,0);
+probabilidad = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",4,0);
+}
+}
 
 //------------------------------------------------------------------
 // CUERPO DEL ROBOT
@@ -529,6 +548,8 @@ if(OrderComment()==commentID){
   if(TiempoElapsedBehavior>TiempoBehavior)nota--;
   if(probabilidad>ProbabilidadBehavior)nota++;
   if(probabilidad<ProbabilidadBehavior)nota--;
+  if(nota>NotaBehavior)nota++;
+  if(nota<NotaBehavior)nota--;
 if(OrderType()==OP_BUY&&cierreop==1){
     cierre=true;
     OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
@@ -580,18 +601,7 @@ if(OrderComment()==commentID){
        }
   }
 }
-
-
-
-
-
 }//Fin For
-
-
-
-
-
-
 
 //----------------------------------------------------------
 //CUERPO DEL BEHAVIOR
@@ -728,44 +738,6 @@ printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB+" N
 // printf("Itemsistem1 1: "+Itemsistem2[1]);
 // printf("Itemsistem1 2: "+Itemsistem2[2]);
 
-
-
-// string rs1readaitem[],rs2readaitem[];
-//
-// if(s1==true){
-//   string rsfile="RS1"+Symbol()+".eakdb";
-//   if(FileIsExist(rsfile)){
-//     string rs1read = FileOpen(rsfile,FILE_READ);
-//     if(rs1read==INVALID_HANDLE){
-//     printf("rs1read 1");
-//     }else{
-//     string rs1readall = FileReadString(rs1read);
-//     FileClose(rs1readall);
-//     }
-//     StringSplit(rs1readall,sep,rs1readaitem);
-//   }
-// }
-// if(s2==true){
-//   string rsfile="RS2"+Symbol()+".eakdb";
-//   if(FileIsExist(rsfile)){
-//     string rs2read = FileOpen(rsfile,FILE_READ);
-//     if(rs2read==INVALID_HANDLE){
-//     printf("rs2read 1");
-//     }else{
-//     string rs2readall = FileReadString(rs2read);
-//     FileClose(rs2readall);
-//     }
-//     StringSplit(rs2readall,sep,rs2readitem);
-//   }
-// }
-//
-// double arrayRS0[5]={rs1readitem[0],rs2readitem[0]};
-//
-// int s1g=0,s2g=0;
-// double puntuacionstrategias=activadasestrategias/3;
-//
-// if(rs1readitem[0]>rs2readitem[0])s1g=s1g+puntuacionstrategias;
-// if(rs2readitem[0]>rs1readitem[0])s2g=s2g+puntuacionstrategias;
 
 
 
