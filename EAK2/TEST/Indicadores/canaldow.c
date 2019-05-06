@@ -8,13 +8,15 @@
 #property version   "1.00"
 #property strict
 #property indicator_chart_window
-#property indicator_buffers 6
+#property indicator_buffers 8
 double Buffer1[];
 double Buffer2[];
 double Buffer3[];
 double Buffer4[];
 double Buffer5[];
 double Buffer6[];
+double Buffer7[];
+double Buffer8[];
 
 
 //+------------------------------------------------------------------+
@@ -51,6 +53,15 @@ SetIndexLabel(4,"Probabilidad");
 SetIndexBuffer(5,Buffer6);
 SetIndexEmptyValue(5,0.0);
 SetIndexLabel(5,"CierreOP");
+
+SetIndexBuffer(6,Buffer7);
+SetIndexEmptyValue(6,0.0);
+SetIndexLabel(6,"Tiempo");
+
+SetIndexBuffer(7,Buffer8);
+SetIndexEmptyValue(7,0.0);
+SetIndexLabel(7,"Tend");
+
 
    return(INIT_SUCCEEDED);
   }
@@ -117,6 +128,11 @@ int tendenciaA=0;
 //   }
 // }
 
+
+if(Buffer8[1]==1||Buffer8[1]==2){
+  tendenciaA=Buffer8[1];
+}
+
 if(FileIsExist(Fcanaltend)==true){
   string canaldowR = FileOpen(Fcanaltend,FILE_READ);
   if(canaldowR==INVALID_HANDLE){
@@ -138,34 +154,47 @@ semaforindv2S2 = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",50,100,200,5,cntB);/
 
 
 if(semaforindv2B!=EMPTY_VALUE){
-  for( ;cntA<300;cntA++){
+  for( ;cntA<100;cntA++){
     if(semaforindv2B2!=EMPTY_VALUE&&semaforindv2B2<semaforindv2B){
-      string canaltendB = FileOpen(Fcanaltend,FILE_WRITE);
-       if(canaltendB==INVALID_HANDLE){
-      printf("canaltend Error 1");
-      }else{
-        string FWcanaltendB = 1;
-                FileWrite(canaltendB,FWcanaltendB);
-                FileClose(canaltendB);
-            //  printf("TENDENCIA CAMBIADA a 1");
+      tendenciaA=1;
 
-         }
+      // string canaltendB = FileOpen(Fcanaltend,FILE_WRITE);
+      //  if(canaltendB==INVALID_HANDLE){
+      // printf("canaltend Error 1");
+      // }else{
+      //   string FWcanaltendB = 1;
+      //           FileWrite(canaltendB,FWcanaltendB);
+      //           FileClose(canaltendB);
+      //       //  printf("TENDENCIA CAMBIADA a 1");
+      //
+      //    }
     }
+    if(semaforindv2B2!=EMPTY_VALUE&&semaforindv2B2>semaforindv2B){
+      tendenciaA=2;
+
+    }
+
 }
 }
 if(semaforindv2S!=EMPTY_VALUE){
-for( ;cntB<300;cntB++){
+for( ;cntB<100;cntB++){
   if(semaforindv2S2!=EMPTY_VALUE&&semaforindv2S2>semaforindv2S){
-      string canaltendS = FileOpen(Fcanaltend,FILE_WRITE);
-       if(canaltendS==INVALID_HANDLE){
-      printf("canaltend Error 2");
-      }else{
-        string FWcanaltendS = 2;
-                FileWrite(canaltendS,FWcanaltendS);
-                FileClose(canaltendS);
-            //    printf("TENDENCIA CAMBIADA a 2");
 
-         }
+    tendenciaA=2;
+
+      // string canaltendS = FileOpen(Fcanaltend,FILE_WRITE);
+      //  if(canaltendS==INVALID_HANDLE){
+      // printf("canaltend Error 2");
+      // }else{
+      //   string FWcanaltendS = 2;
+      //           FileWrite(canaltendS,FWcanaltendS);
+      //           FileClose(canaltendS);
+      //       //    printf("TENDENCIA CAMBIADA a 2");
+      //
+      //    }
+  }
+  if(semaforindv2S2!=EMPTY_VALUE&&semaforindv2S2<semaforindv2S){
+    tendenciaA=1;
   }
 }
 }
@@ -199,16 +228,32 @@ probabilidad=(Open[0]-expectedvalue2)/(expectedvalue1-expectedvalue2);
 
 // printf("exv1: "+expectedvalue1+"exv2: "+expectedvalue2);
 // printf("pr"+probabilidad);
-Buffer4[0]=riesgo;
-Buffer5[0]=probabilidad;
 //Buffer4[0]=expectedvalue1;
 //Buffer5[0]=expectedvalue2;
+double orderprofittotal,tiempomediotodasoperaciones2,tiempomediotodasoperaciones1=0;
+int tiempooperacionsola,contadoroperaciones;
+for(int cntb=0;cntb<OrdersTotal();cntb++){
+  OrderSelect(cntb,SELECT_BY_POS,MODE_TRADES);
+  if(OrderSymbol()==Symbol()&&OrderComment()=="S3"){
+    contadoroperaciones++;
+    orderprofittotal=orderprofittotal+OrderProfit();
+    tiempooperacionsola=OrderCloseTime()-OrderOpenTime();
+    tiempomediotodasoperaciones2=tiempooperacionsola+tiempomediotodasoperaciones2;
+  }
+}
+if(contadoroperaciones>0)tiempomediotodasoperaciones1=tiempomediotodasoperaciones2/contadoroperaciones;
+
 int cierreop=0;
 if(Buffer3[0]==1)cierreop=2;
 if(Buffer3[0]==2)cierreop=1;
-if(tendenciaA==1)cierreop=2;
-if(tendenciaA==2)cierreop=1;
+if(orderprofittotal>0){
+  Buffer4[0]=riesgo;
+}else{
+  Buffer4[0]=riesgo*1.1;
+}
+Buffer5[0]=probabilidad;
 Buffer6[0]=cierreop;
-
+Buffer7[0]=tiempomediotodasoperaciones1;
+Buffer8[0]=tendenciaA;
   }
 //+------------------------------------------------------------------+

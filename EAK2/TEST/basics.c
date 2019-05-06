@@ -440,18 +440,18 @@ if(s2==true){
 
 
 if(s3==true){
-  //Tiempomedioporoperacion=14400;
   int op2;
   op2 = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",2,0);
 
-
-
 if(op2!=EMPTY_VALUE&&op2!=0){
+
 cierreop=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",5,0);
 commentID="S3";
 op=op2;
 riesgo = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",3,0);
 probabilidad = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",4,0);
+Tiempomedioporoperacion=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",6,0);
+
 }
 }
 
