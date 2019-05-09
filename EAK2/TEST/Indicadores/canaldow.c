@@ -132,17 +132,17 @@ int tendenciaA=0;
 if(Buffer8[1]==1||Buffer8[1]==2){
   tendenciaA=Buffer8[1];
 }
-
-if(FileIsExist(Fcanaltend)==true){
-  string canaldowR = FileOpen(Fcanaltend,FILE_READ);
-  if(canaldowR==INVALID_HANDLE){
-  printf("canaldowR 1");
-  }else{
-   string canaldowR2 = FileReadString(canaldowR);
-   tendenciaA=canaldowR2;
-  FileClose(canaldowR);
-  }
-}
+//
+// if(FileIsExist(Fcanaltend)==true){
+//   string canaldowR = FileOpen(Fcanaltend,FILE_READ);
+//   if(canaldowR==INVALID_HANDLE){
+//   printf("canaldowR 1");
+//   }else{
+//    string canaldowR2 = FileReadString(canaldowR);
+//    tendenciaA=canaldowR2;
+//   FileClose(canaldowR);
+//   }
+// }
 
 int cntA=5;
 int cntB=5;
