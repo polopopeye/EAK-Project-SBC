@@ -1,0 +1,41 @@
+0	03:21:07.820	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	03:48:08.151	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	03:51:21.124	Custom indicator EAKmarkowmodel AUDNZD,H1: loaded successfully
+0	03:51:33.099	EAKmarkowmodel AUDNZD,H1: initialized
+1	03:51:33.146	EAKmarkowmodel AUDNZD,H1: zero divide in 'EAKmarkowmodel.mq4' (176,66)
+0	03:53:40.068	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	03:53:42.479	EAKmarkowmodel AUDNZD,H1: uninit reason 2
+0	03:53:42.482	Custom indicator EAKmarkowmodel AUDNZD,H1: removed
+0	03:53:42.491	Custom indicator EAKmarkowmodel AUDNZD,H1: loaded successfully
+0	03:53:42.501	EAKmarkowmodel AUDNZD,H1: initialized
+0	03:54:06.145	EAKmarkowmodel AUDNZD,H1: uninit reason 3
+0	03:54:06.145	EAKmarkowmodel AUDNZD,M5: initialized
+0	03:59:52.325	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	03:59:54.780	EAKmarkowmodel AUDNZD,M5: uninit reason 2
+0	03:59:54.780	Custom indicator EAKmarkowmodel AUDNZD,M5: removed
+0	03:59:54.780	Custom indicator EAKmarkowmodel AUDNZD,M5: loaded successfully
+0	03:59:54.795	EAKmarkowmodel AUDNZD,M5: initialized
+0	04:01:42.817	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	04:01:45.648	EAKmarkowmodel AUDNZD,M5: uninit reason 2
+0	04:01:45.663	Custom indicator EAKmarkowmodel AUDNZD,M5: removed
+0	04:01:45.663	Custom indicator EAKmarkowmodel AUDNZD,M5: loaded successfully
+0	04:01:45.679	EAKmarkowmodel AUDNZD,M5: initialized
+0	04:03:34.205	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	04:03:36.656	EAKmarkowmodel AUDNZD,M5: uninit reason 2
+0	04:03:36.660	Custom indicator EAKmarkowmodel AUDNZD,M5: removed
+0	04:03:36.670	Custom indicator EAKmarkowmodel AUDNZD,M5: loaded successfully
+0	04:03:36.682	EAKmarkowmodel AUDNZD,M5: initialized
+0	04:12:06.146	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	04:12:08.899	EAKmarkowmodel AUDNZD,M5: uninit reason 2
+0	04:12:08.899	Custom indicator EAKmarkowmodel AUDNZD,M5: removed
+0	04:12:08.899	Custom indicator EAKmarkowmodel AUDNZD,M5: loaded successfully
+0	04:12:08.914	EAKmarkowmodel AUDNZD,M5: initialized
+0	14:01:24.265	EAKmarkowmodel AUDNZD,M5: uninit reason 4
+0	14:01:24.271	Custom indicator EAKmarkowmodel AUDNZD,M5: removed
+0	14:12:53.396	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	14:16:46.310	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	14:18:39.211	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	14:30:26.449	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	14:31:21.445	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	14:35:37.434	Compiling 'Kijun_Sen_and_Envelope_??????'
+0	14:39:59.266	Compiling 'Kijun_Sen_and_Envelope_??????'
