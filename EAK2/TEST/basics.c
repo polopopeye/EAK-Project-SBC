@@ -275,7 +275,7 @@ double Bdia=NormalizeDouble((ddsecreco/31)/2,0);
 double Bmes=NormalizeDouble(Bdia*21,0);
 
 
-  ObjectSetText(Symbol()+"secreco","Secreco: BR"+brsecreco+" DD"+ddsecreco+" BD"+Bdia+" BM"+Bmes+" SPR"+spreadvalue,10,NULL,Orange);
+  ObjectSetText(Symbol()+"secreco","BR"+brsecreco+" DD"+ddsecreco+" BM"+Bmes+" SPR"+spreadvalue,10,NULL,Orange);
    ObjectSet(Symbol()+"secreco",OBJPROP_CORNER,0);
    ObjectSet(Symbol()+"secreco",OBJPROP_XDISTANCE,230);
    ObjectSet(Symbol()+"secreco",OBJPROP_YDISTANCE,240);
@@ -351,9 +351,9 @@ int cierreop=0;
 //ESTRATEGIA1 - S1
 bool s1=true;
 bool s2=true;
-bool s3=false;
+bool s3=true;
 bool s4=false;
-int activadasestrategias=2;
+int activadasestrategias=3;
 //----------- FORMULAS INTERESANTES ----------------//
 //double interestrates=expectedvalue1/priceima;
 //double interestrates=crecimiento*inflacion*riesgo;
@@ -445,29 +445,47 @@ if(s1==true){
   op2 = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",2,0);
 
 if(op2!=EMPTY_VALUE&&op2!=0){
-
+  commentID="S1";
 cierreop=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",5,0);
-commentID="S1";
 op=op2;
 riesgo = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",3,0);
 probabilidad = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",4,0);
 Tiempomedioporoperacion=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",6,0);
-
 }
 }
 if(s2==true){
   double op3,cierreop3;
   op3 = iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",4,0);
   cierreop3=iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",5,0);
-
 if(op3>0){
 commentID="S2";
 op=op3;
 cierreop=cierreop3;
-//printf("APERTURA ("+op3+") CIERRE S4 ->"+cierreop3+"  op:"+op);
 riesgo=iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",6,0);
 probabilidad=iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",7,0);
 }
+
+}
+
+// if(s3==true){
+//   double op4 = iCustom(Symbol(),PERIOD_M5,"EAKOceanTrend",6,0);
+//   double cierreop4 = iCustom(Symbol(),PERIOD_M5,"EAKOceanTrend",7,0);
+//   if(op4!=EMPTY_VALUE&&op4!=0){
+//     commentID="S3";
+//     op=op4;
+//     cierreop=cierreop4;
+//   }
+//
+// }
+
+if(s3==true){
+  double op4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",1,0);
+  double cop4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",2,0);
+  if(op4!=EMPTY_VALUE&&op4!=0){
+        commentID="S3";
+        op=op4;
+        cierreop=cop4;
+  }
 
 }
 
@@ -498,6 +516,117 @@ double FProfitBehavior=0;
 int SegundosElapsed=0;
 string FDBread1r;
 string nuevosdatos;
+
+int posicionesS1C=0,posicionesS2C=0,posicionesS3C=0,posicionesS4C=0,posicionesS5C=0;
+int posicionesS1V=0,posicionesS2V=0,posicionesS3V=0,posicionesS4V=0,posicionesS5V=0;
+double pfS1C=0,pfS2C=0,pfS3C=0,pfS4C=0,pfS5C=0;
+double pfS1V=0,pfS2V=0,pfS3V=0,pfS4V=0,pfS5V=0;
+for(int posicionS=0; posicionS<OrdersTotal();posicionS++) {
+  OrderSelect(posicionS,SELECT_BY_POS,MODE_TRADES);
+  if(OrderSymbol()==Symbol()&&OrderComment()=="S1"){
+if(OrderType()==OP_BUY){
+  pfS1C=pfS1C+OrderProfit();
+  posicionesS1C++;
+}
+if(OrderType()==OP_SELL){
+  pfS1V=pfS1V+OrderProfit();
+  posicionesS1V++;
+}
+  }
+  if(OrderSymbol()==Symbol()&&OrderComment()=="S2"){
+if(OrderType()==OP_BUY){
+  pfS2C=pfS2C+OrderProfit();
+  posicionesS2C++;
+}
+if(OrderType()==OP_SELL){
+  pfS2V=pfS2V+OrderProfit();
+  posicionesS2V++;
+}
+  }
+  if(OrderSymbol()==Symbol()&&OrderComment()=="S3"){
+if(OrderType()==OP_BUY){
+  pfS3C=pfS3C+OrderProfit();
+  posicionesS3C++;
+}
+if(OrderType()==OP_SELL){
+  pfS3V=pfS3V+OrderProfit();
+  posicionesS3V++;
+}
+  }
+  if(OrderSymbol()==Symbol()&&OrderComment()=="S4"){
+if(OrderType()==OP_BUY){
+  pfS4C=pfS4C+OrderProfit();
+  posicionesS4C++;
+}
+if(OrderType()==OP_SELL){
+  pfS4V=pfS4V+OrderProfit();
+  posicionesS4V++;
+}
+  }
+  if(OrderSymbol()==Symbol()&&OrderComment()=="S5"){
+if(OrderType()==OP_BUY){
+  pfS5C=pfS5C+OrderProfit();
+  posicionesS5C++;
+}
+if(OrderType()==OP_SELL){
+  pfS5V=pfS5V+OrderProfit();
+  posicionesS5V++;
+}
+  }
+}
+int posicionSB=1;
+double pfSGBC=0,pfSGBV=0;
+if(commentID=="S1"){
+  pfSGBC=pfS1C;
+  pfSGBV=pfS1V;
+  if(op==1){
+    posicionSB=posicionesS1C;
+  }
+  if(op==2){
+    posicionSB=posicionesS1V;
+  }
+}
+if(commentID=="S2"){
+  pfSGBC=pfS2C;
+  pfSGBV=pfS2V;
+  if(op==1){
+    posicionSB=posicionesS2C;
+  }
+  if(op==2){
+    posicionSB=posicionesS2V;
+  }
+}
+if(commentID=="S3"){
+  pfSGBC=pfS3C;
+  pfSGBV=pfS3V;
+  if(op==1){
+    posicionSB=posicionesS3C;
+  }
+  if(op==2){
+    posicionSB=posicionesS3V;
+  }
+}
+if(commentID=="S4"){
+  pfSGBC=pfS4C;
+  pfSGBV=pfS4V;
+  if(op==1){
+    posicionSB=posicionesS4C;
+  }
+  if(op==2){
+    posicionSB=posicionesS4V;
+  }
+}
+if(commentID=="S5"){
+  pfSGBC=pfS5C;
+  pfSGBV=pfS5V;
+  if(op==1){
+    posicionSB=posicionesS5C;
+  }
+  if(op==2){
+    posicionSB=posicionesS5V;
+  }
+}
+
 for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
   OrderSelect(cnta1,SELECT_BY_POS,MODE_TRADES);
   FileDBarchivos=OrderComment()+Symbol()+".eakdb";
@@ -520,6 +649,11 @@ for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
     }else{
       //Si no hay archivo de donde sacar el riesgo, riesgo es neutro.
     }
+
+
+
+
+
 
 
     //------------------------------------------------------------------
@@ -561,19 +695,47 @@ if(OrderComment()==commentID){
   //if(riesgo<RiskBehavior)nota++;
   //if(riesgo>RiskBehavior)nota--;
   if(TiempoElapsedBehavior<TiempoBehavior)nota++;
-  if(TiempoElapsedBehavior>TiempoBehavior)nota--;
+  int tiempocierre=0;
+  if(TiempoElapsedBehavior>TiempoBehavior){
+  nota--;
+  tiempocierre=1;
+  }
   //if(probabilidad>ProbabilidadBehavior)nota++;
   //if(probabilidad<ProbabilidadBehavior)nota--;
   if(nota>NotaBehavior)nota++;
   if(nota<NotaBehavior)nota--;
-if(OrderType()==OP_BUY&&cierreop==1){
-    cierre=true;
-    OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
-}
-if(OrderType()==OP_SELL&&cierreop==2){
-    cierre=true;
-    OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
-}
+
+
+  if(OrderType()==OP_BUY&&cierreop==1&&posicionSB>4){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+  }
+  if(OrderType()==OP_SELL&&cierreop==2&&posicionSB>4){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+  }
+  if(OrderType()==OP_BUY&&cierreop==1&&tiempocierre==1){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+  }
+  if(OrderType()==OP_SELL&&cierreop==2&&tiempocierre==1){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+  }
+
+  if(OrderType()==OP_BUY&&cierreop==1&&pfSGBC>0&&posicionSB<5){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+  }
+  if(OrderType()==OP_SELL&&cierreop==2&&pfSGBV>0&&posicionSB<5){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+  }
+
+
+
+
+
 }
 
 
@@ -647,7 +809,7 @@ string borrar=behaviorrow[0]+"_";
   // si hay mas, se elimina del archivo la op 1. con un search and replace.
   //
   //-----------------------------------------------------------
-  if(cntrowbehavior>100){
+  if(cntrowbehavior>500){
     if(StringReplace(behavior1readall,borrar,"")){
       string Fdb2 = FileOpen(FileDBarchivos,FILE_WRITE);
        if(Fdb2==INVALID_HANDLE){
@@ -766,10 +928,11 @@ printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB+" N
 //GRID 2 POSITIONALOTOFORDERS - POSITION A LOT OF ORDERS
 //------------------------------------------------------------------
 //esto esta bien, no permitir operaciones mas malas.
+
 if(posicionesabiertasrobotv==0){
   filter1v=1;
 }else{
-  if(DiffPipsv>gridposition){ //&&lastorderpS1<0
+  if(DiffPipsv>gridposition&&pfSGBV<0){ //&&lastorderpS1<0
    filter1v=1;
   }else{
    filter1v=0;
@@ -778,12 +941,16 @@ if(posicionesabiertasrobotv==0){
 if(posicionesabiertasrobotc==0){
   filter1c=1;
 }else{
-  if(DiffPipsc>gridposition){ //&&lastorderpB1<0
+  if(DiffPipsc>gridposition&&pfSGBC<0){ //&&lastorderpB1<0
   filter1c=1;
   }else{
   filter1c=0;
   }
 }
+
+
+
+
 
 
 
@@ -818,9 +985,7 @@ if(gestionlotesmethod==4){
 //Existe lotes maximo conforme a un porcentaje del capital maximo para invertir. Segundo lotes minimo.
 //en funcion a lo permitido, para poder hacer mas estadisticas.
 //tiempo promedio, cuanto mayor tiempo mas riesgo.
-
 //riesgo,probabilidad,nota, de operaciones actuales
-
 string MejorS="S"+notaMB;
 string PeorS="S"+notaMBad;
 string MejorPfS="S"+profitMB;//profit
@@ -832,56 +997,61 @@ string PeorRiS="S"+riesgoMBad;
 string MejorTiS="S"+tiempoMB;//tiempo
 string PeorTiS="S"+tiempoMBad;
 //printf(MejorS+PeorS);
+//
+// if(riesgo<0.5){
+//   lotesposicionc=lotesposicionc*1.25;
+//   lotesposicionv=lotesposicionc*1.25;
+// }
+// if(probabilidad>0.5){
+//   lotesposicionc=lotesposicionc*1.25;
+//   lotesposicionv=lotesposicionv*1.25;
+// }
+// if(commentID==MejorPrS){
+//   lotesposicionc=lotesposicionc*1.25;
+//   lotesposicionv=lotesposicionv*1.25;
+// }
+// if(commentID==PeorPrS){
+//   lotesposicionc=lotesposicionc/1.25;
+//   lotesposicionv=lotesposicionv/1.25;
+// }
 
-if(riesgo<0.5){
-  lotesposicionc=lotesposicionc*1.25;
-  lotesposicionv=lotesposicionc*1.25;
-}
-if(probabilidad>0.5){
-  lotesposicionc=lotesposicionc*1.25;
-  lotesposicionv=lotesposicionv*1.25;
-}
-if(commentID==MejorPrS){
-  lotesposicionc=lotesposicionc*1.25;
-  lotesposicionv=lotesposicionv*1.25;
-}
-if(commentID==PeorPrS){
-  lotesposicionc=lotesposicionc/1.25;
-  lotesposicionv=lotesposicionv/1.25;
-}
+//martingale
+
+if(posicionSB==0)posicionSB=1;
+
 if(commentID==MejorPfS){
-  lotesposicionc=lotesposicionc*1.25;
-  lotesposicionv=lotesposicionv*1.25;
+   lotesposicionc=lotesposicionc*1.1*posicionSB;
+   lotesposicionv=lotesposicionv*1.1*posicionSB;
+  //lotesposicionc=lotesposicionc*1.25;
+  //lotesposicionv=lotesposicionv*1.25;
 }
 if(commentID==PeorPfS){
-  lotesposicionc=lotesposicionc/1.25;
-  lotesposicionv=lotesposicionv/1.25;
+  lotesposicionc=lotesposicionc/1.5;
+  lotesposicionv=lotesposicionv/1.5;
 }
-if(commentID==MejorRiS){
-  lotesposicionc=lotesposicionc*1.25;
-  lotesposicionv=lotesposicionv*1.25;
-}
-if(commentID==PeorRiS){
-  lotesposicionc=lotesposicionc/1.25;
-  lotesposicionv=lotesposicionv/1.25;
-}
+
 if(commentID==MejorS){
-  lotesposicionc=lotesposicionc*1.25;
-  lotesposicionv=lotesposicionv*1.25;
+  lotesposicionc=lotesposicionc*1.1;
+  lotesposicionv=lotesposicionv*1.1;
 }
 if(commentID==PeorS){
-  lotesposicionc=minlots;
-  lotesposicionv=minlots;
+  lotesposicionc=lotesposicionc/1.4;
+  lotesposicionv=lotesposicionv/1.4;
 }
+// if(commentID==MejorRiS){
+//   lotesposicionc=lotesposicionc*1.25;
+//   lotesposicionv=lotesposicionv*1.25;
+// }
+// if(commentID==PeorRiS){
+//   lotesposicionc=lotesposicionc/1.25;
+//   lotesposicionv=lotesposicionv/1.25;
+// }
 if(lotesposicionc<minlots){
   lotesposicionc=minlots;
 }
 if(lotesposicionv<minlots){
   lotesposicionv=minlots;
 }
-
-
-
 
 //la idea es que el sistema invierta en los primeros sistemas y minimamanete en los malos.
 //el mejor sistema tendra un 3, un mal sistema tendra un 1 y uno normal un 2.

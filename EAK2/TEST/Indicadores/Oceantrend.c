@@ -8,7 +8,7 @@
 #property version   "1.00"
 #property strict
 #property indicator_chart_window
-#property indicator_buffers 8
+#property indicator_buffers 9
 double Buffer1[];
 double Buffer2[];
 double Buffer3[];
@@ -17,6 +17,7 @@ double Buffer5[];
 double Buffer6[];
 double Buffer7[];
 double Buffer8[];
+double Buffer9[];
 
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
@@ -54,12 +55,15 @@ SetIndexLabel(5,"P1ma1v2");
 
 SetIndexBuffer(6,Buffer7);
 SetIndexEmptyValue(6,0.0);
-SetIndexLabel(6,"vC");
+SetIndexLabel(6,"OP");
 
 SetIndexBuffer(7,Buffer8);
 SetIndexEmptyValue(7,0.0);
-SetIndexLabel(7,"vV");
+SetIndexLabel(7,"COP");
 
+SetIndexBuffer(8,Buffer9);
+SetIndexEmptyValue(8,0.0);
+SetIndexLabel(8,"Tend");
 
 ObjectCreate(0,Symbol()+"trendVenta",OBJ_TRENDBYANGLE,0,0,1,0,0);
 ObjectSetInteger(0,Symbol()+"trendVenta",OBJPROP_COLOR,Red);
@@ -145,7 +149,7 @@ ObjectMove(0,Symbol()+"trendCompra",1,Time[0],Buffer1[0]);
 ObjectMove(0,Symbol()+"trendCompra",0,Time[m1],Buffer1[m1]);
 
 ObjectMove(0,Symbol()+"trendVenta",1,Time[0],Buffer2[0]);
-ObjectMove(0,Symbol()+"trendVenta",0,Time[P1ma1v2],Buffer2[m2]);
+ObjectMove(0,Symbol()+"trendVenta",0,Time[m2],Buffer2[m2]);
 
 int timec1=Time[m1];
 int timec2=Time[0];
@@ -153,6 +157,25 @@ int timev1=Time[m2];
 int timev2=Time[0];
 int tiempo1=(timec2-timec1)/60;
 int tiempo2=(timev2-timev1)/60;
+
+int tendencia1=0;
+
+if(m1>m2){
+  if(Buffer1[0]<Buffer1[m1]&&Buffer2[0]>Buffer2[m2])tendencia1++;
+  if(Buffer1[0]>Buffer1[m1]&&Buffer2[0]>Buffer2[m2])tendencia1++;
+  if(Buffer1[0]>Buffer1[m1]&&Buffer2[0]<Buffer2[m2])tendencia1=0;
+}
+if(m2>m1){
+  if(Buffer2[0]<Buffer2[m2]&&Buffer1[0]>Buffer1[m1])tendencia1--;
+  if(Buffer1[0]<Buffer1[m1]&&Buffer2[0]<Buffer2[m2])tendencia1--;
+  if(Buffer2[0]>Buffer2[m2]&&Buffer1[0]<Buffer1[m1])tendencia1=0;
+}
+
+
+
+Buffer9[0]=tendencia1;
+//printf("tend"+tendencia1);
+
 
 
 //double radiansC=;
@@ -188,19 +211,10 @@ if((pendientec>40&&pendientec<70)||(pendientec>-5&&pendientec<5)){ //o neutro o
 if((pendientev>40&&pendientev<70)||(pendientev>-5&&pendientev<5)){
   Buffer6[0]=P1ma1v2;
 }
-//
-// while((pendientec<40)||(pendientec>60)||(cnta<10)){
-//   P1ma1v1++;
-//   cnta++;
-// }
-// if(pendientec>40&&pendientec<60){
-// }
-// while((pendientev<40)||(pendientev>60)||(cntb<10)){
-//   P1ma1v2++;
-//   cntb++;
-// }
-// if(pendientev>40&&pendientev<60){
-// }
+
+
+
+
 Buffer4[0]=pendientev;
 Buffer3[0]=pendientec;
 
@@ -209,116 +223,20 @@ Buffer3[0]=pendientec;
 //todo va en funcion a los grados actuales y fuerza aztual.
 
 
-int recopilandodatos=0;
-//significa que sube muy rapido y tienen un periodos muy bajo (Imposible),
-if(pendientec>70&&P1ma1v1==25.4723&&pendientev<70&&P1ma1v2==25.2596){
-  Buffer5[0]=P1ma1v1*1.1;
-  Buffer6[0]=P1ma1v2*1.1;
-  printf("Recopilando Datos [3]------*(^_^)*");
-recopilandodatos=1;
+
+
+double semaforindv2B = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",50,100,200,4,1);//COMPRA
+double semaforindv2S = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",50,100,200,5,1);//VENTA
+
+
+if(tendencia1>0&&semaforindv2B!=EMPTY_VALUE){
+  Buffer7[0]=1;
+  Buffer8[0]=2;
 }
-
-
-if(P1ma1v1<2){
-  Buffer5[0]=P1ma1v1*2;
-  printf("Recopilando Datos Compra [<10]------_(T_T)_");
-recopilandodatos=1;
+if(tendencia1<0&&semaforindv2S!=EMPTY_VALUE){
+  Buffer7[0]=2;
+  Buffer8[0]=1;
 }
-if(P1ma1v2<2){
-  Buffer6[0]=P1ma1v2*2;
-  printf("Recopilando Datos Venta [<10]------_(T_T)_");
-recopilandodatos=1;
-}
-
-
-
-if(pendientec>0&&recopilandodatos==0){
-  //printf("Compra");
-  if(pendientec<40&&pendientec>30){
-    printf("Desaceleración compra, no bueno");
-    //Buffer5[0]=P1ma1v1/1.05;
-    }
-    if(pendientec<30){
-      //Buffer5[0]=P1ma1v1/1.1;
-      //se aumenta reduciendo el tiempo y aumentando el ruido
-      printf("Fin compra, Observar mercado de cerca");
-
-    }
-  if(pendientec>60){
-    printf("compra confirmada muy acelerada reducir para ver a largo plazo");
-    //Buffer5[0]=P1ma1v1*3;
-    //se multiplica el tiempo observado y se reduce el ruido.
-  }
-  if(pendientec>40&&pendientec<60){
-    printf("Compra, Tendecia clara y estable"+(((tiempo1/3)/2)/24)+" Dias");
-    //Buffer5[0]=P1ma1v1;
-    //se multiplica el tiempo observado y se reduce el ruido.
-  }
-}
-
-
-if(pendientev>0&&recopilandodatos==0){
-  //printf("Compra");
-  if(pendientev<40&&pendientec>30){
-    printf("Desaceleración venta,no bueno");
-    //se aumenta reduciendo el tiempo y aumentando el ruido
-    //Buffer6[0]=P1ma1v2/1.05;
-  }
-  if(pendientev<30){
-    //Buffer6[0]=P1ma1v2/1.1;
-    //se aumenta reduciendo el tiempo y aumentando el ruido
-    printf("Fin venta, Observar mercado de cerca");
-  }
-  if(pendientev>60){
-    printf("venta confirmada muy acelerada reducir para ver a largo plazo");
-    //Buffer6[0]=P1ma1v2*3;
-    //se multiplica el tiempo observado y se reduce el ruido.
-  }
-  if(pendientev>40&&pendientev<60){
-    printf("Venta, Tendecia clara y estable"+(((tiempo2/3)/2)/24)+" Dias");
-    //Buffer6[0]=P1ma1v2;
-    //se multiplica el tiempo observado y se reduce el ruido.
-  }
-}
-if(pendientev<0&&recopilandodatos==0){
-    //Buffer6[0]=P1ma1v2/1.3;
-    printf("CERRANDO VENTAS, observando a corto plazo");
-
-}
-if(pendientec<0&&recopilandodatos==0){
-  //Buffer5[0]=P1ma1v1/1.3;
-  printf("CERRANDO COMPRAS, observando a corto plazo");
-
-}
-
-double volumen=iVolume(Symbol(),PERIOD_CURRENT,0);
-double volumenp=iVolume(Symbol(),PERIOD_CURRENT,1);
-
-
-Buffer7[0]=volumen;
-Buffer8[0]=volumen;
-
-if(Buffer7[P1ma1v1]==0){
-  Buffer7[P1ma1v1]=volumenp;
-}
-if(Buffer8[P1ma1v2]==0){
-  Buffer8[P1ma1v2]=volumenp;
-}
-
-if(Buffer7[0]>Buffer7[P1ma1v1]){
-printf("Compra Se confirma la señal - Tiene a favorecer compra");
-}
-if(Buffer7[0]<Buffer7[P1ma1v1]){
-printf("Compra Desacelera la señal, posible climax de cambio");
-}
-if(Buffer8[0]>Buffer8[P1ma1v2]){
-printf("Venta Se confirma la señal - Tiene a favorecer compra");
-}
-if(Buffer8[0]<Buffer8[P1ma1v2]){
-printf("Venta Desacelera la señal, posible climax de cambio");
-}
-
-//Siempre tiene que estar a 45º
 
 
 
