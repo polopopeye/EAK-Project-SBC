@@ -67,20 +67,28 @@ void start()
     double rmi = iCustom(Symbol(),PERIOD_M30,"RMI",9,26,54,0,0);
     double semaforindv2B = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",50,100,200,4,1);//COMPRA
     double semaforindv2S = iCustom(Symbol(),PERIOD_M5,"semaforov2eak",50,100,200,5,1);//VENTA
+//    double instrendR = iCustom(Symbol(),PERIOD_M30,"InstantaneousTrendline",0,0);//Rojo
+//    double instrendA = iCustom(Symbol(),PERIOD_M30,"InstantaneousTrendline",1,0);//Azul
 
-if(semaforindv2B!=EMPTY_VALUE&&semaforindv2B!=0){
-  if(rmi<25){
-    Buffer2[0]=1;
-    Buffer3[0]=2;
-  }
+//if(instrendA>instrendR){//compra
+  if(semaforindv2B!=EMPTY_VALUE&&semaforindv2B!=0){
+    if(rmi<25){
+      Buffer2[0]=1;
+      Buffer3[0]=2;
     }
+      }
+//}
+//if(instrendA<instrendR){//Venta
+  if(semaforindv2S!=EMPTY_VALUE&&semaforindv2S!=0){
+  if(rmi>75){
+    Buffer2[0]=2;
+  Buffer3[0]=1;
+  }
+  }
+//}
 
-if(semaforindv2S!=EMPTY_VALUE&&semaforindv2S!=0){
-if(rmi>75){
-  Buffer2[0]=2;
-Buffer3[0]=1;
-}
-}
+
+
 
 
 

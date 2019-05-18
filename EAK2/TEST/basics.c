@@ -11,7 +11,7 @@
   double cogBP=0.9;
   //  double multiplicador=1.5; //Martingale factor to recover bad choices
   //double multiplicador=1.35; //Martingale factor to recover bad choices
-  double maxspread=50;
+  double maxspread=101;
 
   //+---------------------------------------------------------------------+
 bool debugoption=true;
@@ -675,9 +675,10 @@ if(FileIsExist(FileDBarchivos2)){
   NotaBehavior=FDBread4r[3];
   TiempoBehavior=FDBread4r[4];
 }
-double TiempoElapsedBehavior=OrderCloseTime()-OrderOpenTime();
-double FProfitBehavior2=(OrderProfit()/OrderLots())/TiempoElapsedBehavior;
 
+
+double TiempoElapsedBehavior=SegundosElapsed;
+double FProfitBehavior2=(OrderProfit()/OrderLots())/TiempoElapsedBehavior;
 
 // if(TiempoElapsedBehavior<TiempoBehavior){
 //   RiskBehavior=RiskBehavior/1.15;
@@ -685,7 +686,6 @@ double FProfitBehavior2=(OrderProfit()/OrderLots())/TiempoElapsedBehavior;
 // if(TiempoElapsedBehavior>TiempoBehavior){
 //   RiskBehavior=RiskBehavior*1.15;
 // }
-
 
 if(OrderComment()==commentID){
   if(FProfitBehavior2>=FProfitBehavior)nota++;
@@ -706,23 +706,6 @@ if(OrderComment()==commentID){
   if(nota<NotaBehavior)nota--;
 
 
-  if(OrderType()==OP_BUY&&cierreop==1&&posicionSB>4){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
-  }
-  if(OrderType()==OP_SELL&&cierreop==2&&posicionSB>4){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
-  }
-  if(OrderType()==OP_BUY&&cierreop==1&&tiempocierre==1){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
-  }
-  if(OrderType()==OP_SELL&&cierreop==2&&tiempocierre==1){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
-  }
-
   if(OrderType()==OP_BUY&&cierreop==1&&pfSGBC>0&&posicionSB<5){
       cierre=true;
       OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
@@ -732,8 +715,23 @@ if(OrderComment()==commentID){
       OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
   }
 
+  if(OrderType()==OP_BUY&&cierreop==1&&posicionSB>4){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+  }
+  if(OrderType()==OP_SELL&&cierreop==2&&posicionSB>4){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+  }
 
-
+  if(OrderType()==OP_BUY&&cierreop==1&&tiempocierre==1){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+  }
+  if(OrderType()==OP_SELL&&cierreop==2&&tiempocierre==1){
+      cierre=true;
+      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+  }
 
 
 }
