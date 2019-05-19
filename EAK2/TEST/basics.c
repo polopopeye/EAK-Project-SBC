@@ -350,10 +350,10 @@ int Lotesmedioporoperacion=0;
 int cierreop=0;
 //ESTRATEGIA1 - S1
 bool s1=true;
-bool s2=true;
-bool s3=true;
+bool s2=false;
+bool s3=false;
 bool s4=false;
-int activadasestrategias=3;
+int activadasestrategias=1;
 //----------- FORMULAS INTERESANTES ----------------//
 //double interestrates=expectedvalue1/priceima;
 //double interestrates=crecimiento*inflacion*riesgo;
@@ -440,25 +440,66 @@ int activadasestrategias=3;
 // }
 
 
-if(s1==true){
-  int op2;
-  op2 = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",2,0);
+// if(s1==true){
+//   int op2;
+//   op2 = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",2,0);
+//
+// if(op2!=EMPTY_VALUE&&op2!=0){
+//   commentID="S1";
+// cierreop=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",5,0);
+// op=op2;
+// riesgo = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",3,0);
+// probabilidad = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",4,0);
+// Tiempomedioporoperacion=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",6,0);
+// }
+// }
 
-if(op2!=EMPTY_VALUE&&op2!=0){
-  commentID="S1";
-cierreop=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",5,0);
-op=op2;
-riesgo = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",3,0);
-probabilidad = iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",4,0);
-Tiempomedioporoperacion=iCustom(Symbol(),PERIOD_M5,"EAKcanaldow",6,0);
+if(s1==true){
+  double op5=iCustom(Symbol(),PERIOD_M5,"EAKBINOPT",1,0);
+  double cop5=iCustom(Symbol(),PERIOD_M5,"EAKBINOPT",2,0);
+  if(op5!=EMPTY_VALUE&&op5!=0){
+        commentID="S1";
+        op=op5;
+  }
+  if(cop5!=EMPTY_VALUE&&cop5!=0){
+        commentID="S1";
+        cierreop=cop5;
+  }
 }
-}
+
 if(s2==true){
+  double op4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",1,0);
+  double cop4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",2,0);
+  if(op4!=EMPTY_VALUE&&op4!=0){
+        commentID="S2";
+        op=op4;
+  }
+  if(cop4!=EMPTY_VALUE&&cop4!=0){
+        commentID="S2";
+        cierreop=cop4;
+  }
+}
+
+if(s3==true){
+  double op1=iCustom(Symbol(),PERIOD_M5,"EAKyzyz",1,0);
+  double cop1=iCustom(Symbol(),PERIOD_M5,"EAKyzyz",2,0);
+  if(op1!=EMPTY_VALUE&&op1!=0){
+        commentID="S3";
+        op=op1;
+  }
+  if(cop1!=EMPTY_VALUE&&cop1!=0){
+        commentID="S3";
+        cierreop=cop1;
+  }
+
+}
+
+if(s4==true){
   double op3,cierreop3;
   op3 = iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",4,0);
   cierreop3=iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",5,0);
 if(op3>0){
-commentID="S2";
+commentID="S4";
 op=op3;
 cierreop=cierreop3;
 riesgo=iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",6,0);
@@ -478,16 +519,7 @@ probabilidad=iCustom(Symbol(),PERIOD_M5,"EAKmarkowmodel",7,0);
 //
 // }
 
-if(s3==true){
-  double op4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",1,0);
-  double cop4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",2,0);
-  if(op4!=EMPTY_VALUE&&op4!=0){
-        commentID="S3";
-        op=op4;
-        cierreop=cop4;
-  }
 
-}
 
 //------------------------------------------------------------------
 // CUERPO DEL ROBOT
@@ -706,29 +738,29 @@ if(OrderComment()==commentID){
   if(nota<NotaBehavior)nota--;
 
 
-  if(OrderType()==OP_BUY&&cierreop==1&&pfSGBC>0&&posicionSB<5){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
-  }
-  if(OrderType()==OP_SELL&&cierreop==2&&pfSGBV>0&&posicionSB<5){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
-  }
+  // if(OrderType()==OP_BUY&&cierreop==1&&pfSGBC>0&&posicionSB<5){
+  //     cierre=true;
+  //     OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+  // }
+  // if(OrderType()==OP_SELL&&cierreop==2&&pfSGBV>0&&posicionSB<5){
+  //     cierre=true;
+  //     OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+  // }
 
-  if(OrderType()==OP_BUY&&cierreop==1&&posicionSB>4){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
-  }
-  if(OrderType()==OP_SELL&&cierreop==2&&posicionSB>4){
-      cierre=true;
-      OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
-  }
+  // if(OrderType()==OP_BUY&&cierreop==1&&posicionSB>4){
+  //     cierre=true;
+  //     OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
+  // }
+  // if(OrderType()==OP_SELL&&cierreop==2&&posicionSB>4){
+  //     cierre=true;
+  //     OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
+  // }
 
-  if(OrderType()==OP_BUY&&cierreop==1&&tiempocierre==1){
+  if(OrderType()==OP_BUY&&cierreop==1){
       cierre=true;
       OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Blue);
   }
-  if(OrderType()==OP_SELL&&cierreop==2&&tiempocierre==1){
+  if(OrderType()==OP_SELL&&cierreop==2){
       cierre=true;
       OrderClose(OrderTicket(),OrderLots(),OrderClosePrice(),Slippage,Red);
   }
@@ -910,7 +942,7 @@ int notaMBad = ArrayMinimum(Itemsistem4,activadasestrategias,1);
 int tiempoMBad = ArrayMaximum(Itemsistem5,activadasestrategias,1);
 int tiempoMB = ArrayMinimum(Itemsistem5,activadasestrategias,1);
 
-printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB+" Nota: "+notaMB+"("+Itemsistem4[notaMB]+")");
+//printf("profitMB: "+profitMB+" riesgoMB: "+riesgoMB+" Prob: "+probabilidadMB+" Nota: "+notaMB+"("+Itemsistem4[notaMB]+")");
 // printf("Itemsistem1 1: "+Itemsistem2[1]);
 // printf("Itemsistem1 2: "+Itemsistem2[2]);
 
@@ -1018,8 +1050,8 @@ string PeorTiS="S"+tiempoMBad;
 if(posicionSB==0)posicionSB=1;
 
 if(commentID==MejorPfS){
-   lotesposicionc=lotesposicionc*1.1*posicionSB;
-   lotesposicionv=lotesposicionv*1.1*posicionSB;
+   lotesposicionc=lotesposicionc*1.1;//*posicionSB;
+   lotesposicionv=lotesposicionv*1.1;//*posicionSB;
   //lotesposicionc=lotesposicionc*1.25;
   //lotesposicionv=lotesposicionv*1.25;
 }
