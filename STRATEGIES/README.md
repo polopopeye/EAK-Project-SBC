@@ -28,3 +28,6 @@ https://www.forexfactory.com/showthread.php?t=533791
 - La estrategia tiene indicadores, ADXcrossesNon-repainting, SMA CrossOver_Justin, SuperTrend.
 Sigue la tendencia a traves de estos indicadores.
 #Beneficios
+
+4. Symphonie
+- La estrategia tiene indicadores, Symphonie_Extreme_Cycle_Indikator, Symphonie_Market_Emotion_Indikator, Symphonie_Sentiment_Indikator, Symphonie_Trendline_Indikator
