@@ -699,6 +699,10 @@ if(op==cierreop){
   double probabilidaditem=0;
   double Tiempooperacionbehavior,tiempomedio1,Tiempomedioporoperacion2,riesgomedio1,probabilidadmedia1,Lotesmedioporoperacionbehaviour,notaitem,notamedia1,notamedia2;
   double profitmediobehavior,Profitmedioporoperacion2, factorprofit,riesgomedioporoperacion2,probabilidadmediaporoperacion2,Lotesmedioporoperacion2behaviour;
+  double LotesmedioporoperacionbehaviourV,LotesmedioporoperacionbehaviourC,profitmediobehaviorc,profitmediobehaviorv,PFbehaviorC=0,PFbehaviorV=0,probabilidadcompraop=0,probabilidadventaop=0,PRlotesC=1,PRlotesV=1,PRlotesC2=1,PRlotesV2=1;
+  int PFoperacionC=0,PFoperacionV=0,totalopV=0,totalopC=0;
+
+
 
   if(FileIsExist(FileDBarchivosSG)){
     string behavior1read = FileOpen(FileDBarchivosSG,FILE_READ);
@@ -749,13 +753,36 @@ if(op==cierreop){
   //riesgomedio1=riesgomedio1+riesgoitem;
   //probabilidadmedia1=probabilidadmedia1+probabilidaditem;
   notamedia1=notamedia1+notaitem;
+if(OrderType()==OP_BUY){
+  totalopC=totalopC+1;
+  profitmediobehaviorc=profitmediobehaviorc+OrderProfit();
+  LotesmedioporoperacionbehaviourC=LotesmedioporoperacionbehaviourC+OrderLots();
+  if(OrderProfit()>0){
+    PFoperacionC=PFoperacionC+1;
+  }
+}
+if(OrderType()==OP_SELL){
+  totalopV=totalopV+1;
+  profitmediobehaviorv=profitmediobehaviorv+OrderProfit();
+LotesmedioporoperacionbehaviourV=LotesmedioporoperacionbehaviourV+OrderLots();
+  if(OrderProfit()>0){
+    PFoperacionV=PFoperacionV+1;
+  }
+}
+
   }
   }//fin for
-  notamedia2=notamedia1/cntrowbehavior;
+
+  if(totalopC>0)probabilidadcompraop=PFoperacionC/totalopC;
+  if(totalopV>0)probabilidadventaop=PFoperacionV/totalopV;
+  if(LotesmedioporoperacionbehaviourC>0)PFbehaviorC=profitmediobehaviorc/LotesmedioporoperacionbehaviourC;
+  if(LotesmedioporoperacionbehaviourV>0)PFbehaviorV=profitmediobehaviorv/LotesmedioporoperacionbehaviourV;
+
+  notamedia2=notamedia1/cntrowbehavior;//PROBABILIDAD
   Lotesmedioporoperacion2behaviour=Lotesmedioporoperacionbehaviour/cntrowbehavior;
   Tiempomedioporoperacion2=tiempomedio1/cntrowbehavior;
   Profitmedioporoperacion2=profitmediobehavior/cntrowbehavior;
-  factorprofit=(Profitmedioporoperacion2/Lotesmedioporoperacion2behaviour)/Tiempomedioporoperacion2;
+  factorprofit=Profitmedioporoperacion2/Lotesmedioporoperacion2behaviour;
   //riesgomedioporoperacion2=riesgomedio1/cntrowbehavior;
   //probabilidadmediaporoperacion2=probabilidadmedia1/cntrowbehavior;
 
@@ -805,7 +832,7 @@ if(op==cierreop){
   string stringSnota4="S"+Snota4;
   string stringSnota5="S"+Snota5;
 
-  double relacionpuntexp=activadasestrategias/14.5;//0.4
+  double relacionpuntexp=activadasestrategias/13;//0.45
 double punt1=5,punt2=4,punt3=3,punt4=2,punt5=1;
 double pfB=0.8,notaB=0.8;
 if(Spf1!=EMPTY_VALUE&&Spf2!=EMPTY_VALUE&&Spf3!=EMPTY_VALUE&&Spf4!=EMPTY_VALUE&&Spf5!=EMPTY_VALUE&&Spf1>0&&Spf2>0&&Spf3>0&&Spf4>0&&Spf5>0&&Spf1<=activadasestrategias&&Spf2<=activadasestrategias&&Spf3<=activadasestrategias&&Spf4<=activadasestrategias&&Spf5<=activadasestrategias){
@@ -825,8 +852,8 @@ if(stringSpf2==commentID)pfB=punt2*relacionpuntexp;
     if(stringSnota4==commentID)notaB=punt4*relacionpuntexp;
   }
 
-  if(pfB<0.5)pfB=0.5;
-  if(notaB<0.5)notaB=0.5;
+//  if(pfB<0.4)pfB=0.4;
+//  if(notaB<0.4)notaB=0.4;
   //----------------------------------------------------------------
   // GESTION LOTE
   //------------------------------------------------------------------
@@ -835,9 +862,38 @@ if(stringSpf2==commentID)pfB=punt2*relacionpuntexp;
   // en funciona a las probabilidades de perdidas se observa un capital optimo. y riesgo de default que
   // ayudara a definir el capital medio, minimo y maximo de inversion recomendado.
 
-//printf("pfB: "+pfB+" __ notaB: "+notaB);
-  double lotesposicionc=NormalizeDouble(lotesinicial*pfB*notaB,2);
-  double lotesposicionv=NormalizeDouble(lotesinicial*pfB*notaB,2);
+
+  if(probabilidadcompraop>probabilidadventaop){
+    PRlotesC=1.30;
+    PRlotesV=0.80;
+  }
+  if(probabilidadcompraop<probabilidadventaop){
+    PRlotesC=0.80;
+    PRlotesV=1.30;
+  }
+  if(PFbehaviorC>PFbehaviorV){
+    PRlotesC2=1.30;
+    PRlotesV2=0.80;
+  }
+  if(PFbehaviorC<PFbehaviorV){
+    PRlotesC2=1.30;
+    PRlotesV2=0.80;
+  }
+
+double martingaleLotes=1.1;
+if(posicionSB>0)martingaleLotes=(posicionSB/10)+1;
+
+
+//printf("PRlotesC2:"+PRlotesC2+" _ PRlotesV:"+PRlotesV);
+double multiplicadorlotesestrategia=(pfB+notaB)/2;
+double PRlotesC3=(PRlotesC+PRlotesC2)/2;
+double PRlotesV3=(PRlotesC+PRlotesV2)/2;
+double multiplicadorC=(multiplicadorlotesestrategia+PRlotesC3)/2;
+double multiplicadorV=(multiplicadorlotesestrategia+PRlotesV3)/2;
+double multiplicadorC2=(martingaleLotes+multiplicadorC)/2;
+double multiplicadorV2=(martingaleLotes+multiplicadorV)/2;
+  double lotesposicionc=NormalizeDouble(lotesinicial*multiplicadorC2,2);
+  double lotesposicionv=NormalizeDouble(lotesinicial*multiplicadorV2,2);
 
 if(lotesposicionc<minlots)lotesposicionc=minlots;
 if(lotesposicionv<minlots)lotesposicionv=minlots;
