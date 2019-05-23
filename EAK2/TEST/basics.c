@@ -968,8 +968,10 @@ if(posicionSB==0){
   }
 }
 
-
-
+bool actualordersend=false;
+int sendop;
+double lotsend;
+string strategysend,Nombrestrategia;
 //printf("F1: "+filter1c+" _ GridpipsC: "+GridpipsC+" _ pfSGBC:"+pfSGBC);
   double precio=SymbolInfoDouble(Symbol(),SYMBOL_BID);
   color clrR=clrRed;
@@ -977,22 +979,19 @@ if(posicionSB==0){
 //  int cntopener=0;
   if(spreadvalue<maxspread){
     if(op==1&&filter1c==1&&commentID!="error"){
-      OrderSend(Symbol(),0,lotesposicionc,Ask,Slippage,0,0,commentID,MagicNumber,0,Blue);
 
-        ObjectCreate(ChartID(),Time[0],OBJ_TEXT,0,TimeCurrent(),precio);
-        ObjectSetString(ChartID(),Time[0],OBJPROP_TEXT,StrategyName);
-        ObjectSetString(ChartID(),Time[0],OBJPROP_FONT,"Arial");
-       ObjectSetInteger(ChartID(),Time[0],OBJPROP_FONTSIZE,"12");
-       ObjectSetInteger(ChartID(),Time[0],OBJPROP_COLOR,clrB);
+      actualordersend=true;
+      sendop=1;
+      strategysend=commentID;
+      lotsend=lotesposicionc;
+      Nombrestrategia=StrategyName;
     }
     if(op==2&&filter1v==1&&commentID!="error"){
-
-      OrderSend(Symbol(),1,lotesposicionv,Bid,Slippage,0,0,commentID,MagicNumber,0,Red);
-  ObjectCreate(ChartID(),Time[0],OBJ_TEXT,0,TimeCurrent(),precio);
-  ObjectSetString(ChartID(),Time[0],OBJPROP_TEXT,StrategyName);
-  ObjectSetString(ChartID(),Time[0],OBJPROP_FONT,"Arial");
-  ObjectSetInteger(ChartID(),Time[0],OBJPROP_FONTSIZE,"12");
-  ObjectSetInteger(ChartID(),Time[0],OBJPROP_COLOR,clrR);
+      actualordersend=true;
+      sendop=2;
+      strategysend=commentID;
+      lotsend=lotesposicionv;
+      Nombrestrategia=StrategyName;
 
     }
 
@@ -1002,26 +1001,38 @@ if(posicionSB==0){
 
 
 
-
-
-
-
-
-
-
-
-
    if(next_candle<=Time[0])
       {
          next_candle=Time[0]+Period();
          // New candle. Your trading functions here
+
 
           double MyPoint=Point;
 
    if(TotalOrdersCount()>=0&&TotalOrdersCount()<199)
      {
 
+if(actualordersend==true){
 
+  if(sendop==1){
+    OrderSend(Symbol(),0,lotsend,Ask,Slippage,0,0,strategysend,MagicNumber,0,Blue);
+    ObjectCreate(ChartID(),Time[0],OBJ_TEXT,0,TimeCurrent(),precio);
+    ObjectSetString(ChartID(),Time[0],OBJPROP_TEXT,Nombrestrategia);
+    ObjectSetString(ChartID(),Time[0],OBJPROP_FONT,"Arial");
+   ObjectSetInteger(ChartID(),Time[0],OBJPROP_FONTSIZE,"12");
+   ObjectSetInteger(ChartID(),Time[0],OBJPROP_COLOR,clrB);
+  }
+
+if(sendop==2){
+  OrderSend(Symbol(),1,lotsend,Bid,Slippage,0,0,strategysend,MagicNumber,0,Red);
+ ObjectCreate(ChartID(),Time[0],OBJ_TEXT,0,TimeCurrent(),precio);
+ ObjectSetString(ChartID(),Time[0],OBJPROP_TEXT,Nombrestrategia);
+ ObjectSetString(ChartID(),Time[0],OBJPROP_FONT,"Arial");
+ ObjectSetInteger(ChartID(),Time[0],OBJPROP_FONTSIZE,"12");
+ ObjectSetInteger(ChartID(),Time[0],OBJPROP_COLOR,clrR);
+}
+
+}
      int result=0;
 
 
