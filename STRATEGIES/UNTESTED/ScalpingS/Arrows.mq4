@@ -1,6 +1,6 @@
 //
 
-#property copyright "Copyright ï¿½ 2010 OOO ï¿½ï¿½ï¿½ï¿½"
+#property copyright "Copyright © 2010 OOO ÔÐÑÊ"
 #property link      "http://www.forexriches.ru"
 
 #property indicator_chart_window
@@ -23,6 +23,7 @@ int gi_112 = 0;
 double gd_116 = 0.0;
 double gd_unused_124 = 0.0;
 
+int init() {
    SetIndexStyle(0, DRAW_LINE);
    SetIndexBuffer(0, g_ibuf_92);
    SetIndexStyle(1, DRAW_LINE);
