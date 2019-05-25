@@ -31,3 +31,21 @@ Sigue la tendencia a traves de estos indicadores.
 
 4. Symphonie
 - La estrategia tiene indicadores, Symphonie_Extreme_Cycle_Indikator, Symphonie_Market_Emotion_Indikator, Symphonie_Sentiment_Indikator, Symphonie_Trendline_Indikator
+
+5. MDTS
+- La estrategia tiene, QQE_Alert_MTF_v5 y MTF_QQEA_Hist_Alert.
+https://www.forexfactory.com/showthread.php?t=916878
+Es una estrategia muy efectiva, con un porcentaje de acierto muy alto, pero muy lento, abre muy pocas
+posiciones al año y se basa en seguir una tendencia a largo plazo y un quiebre en una tendencia pequeña.
+
+6. SDTR (Symple Day Trading Reversal)
+https://www.forexfactory.com/showthread.php?t=864690
+- La estrategia tiene, ZigZag Arrow,3c_turbo_jrsx_filtered,Pivot_Voty.
+Es una estrategia diaria, observa el cierre y la apertura del dia, muy rapida, relativamente peligrosa pero bastante efectiva y no compromete el capital a largo plazo.
+
+7. Scalping S
+- La estrategia tiene, Super Signals, Solar Winds joy - histo,Channel,Arrows,
+
+
+?? BreakOut(EN PROCESO)
+- La estrategia tiene el indicador BreakoutStrategy,
