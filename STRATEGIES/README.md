@@ -43,9 +43,15 @@ https://www.forexfactory.com/showthread.php?t=864690
 - La estrategia tiene, ZigZag Arrow,3c_turbo_jrsx_filtered,Pivot_Voty.
 Es una estrategia diaria, observa el cierre y la apertura del dia, muy rapida, relativamente peligrosa pero bastante efectiva y no compromete el capital a largo plazo.
 
-7. Scalping S
-- La estrategia tiene, Super Signals, Solar Winds joy - histo,Channel,Arrows,
 
+?? VSSTA
+- La estrategia tiene, Double EMA crossover with arrow and email,DRBobCCI,
+Problemas, estrategia falta desarrollar. (pero tiene futuro.)
+
+?? Scalping S (EN PROCESO)
+- La estrategia tiene, Super Signals, Solar Winds joy - histo,Channel,Arrows,
+Problemas, indicadores Repaint
 
 ?? BreakOut(EN PROCESO)
 - La estrategia tiene el indicador BreakoutStrategy,
+Problemas, indicadores incorrectos

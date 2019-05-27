@@ -489,6 +489,24 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
          string FileDBarchivosRG="R"+FileDBarchivosSG;
 
 
+        //
+        // if(s1==true&&sond==1){
+        //   double op41=iCustom(Symbol(),PERIOD_M5,"EAKvssta",1,0);
+        //   double cop41=iCustom(Symbol(),PERIOD_M5,"EAKvssta",2,0);
+        //   if(op41!=EMPTY_VALUE&&op41!=0){
+        //         commentID="S1";
+        //         op=op41;
+        //         StrategyName="VSSTA - TESTER";
+        //   }
+        //   if(posicionesS1C>0||posicionesS1V>0){
+        //     if(cop41!=EMPTY_VALUE&&cop41!=0){
+        //           commentID="S1";
+        //                     cierreop=cop41;
+        //           StrategyName="VSSTA - TESTER";
+        //     }
+        //   }
+        // }
+
 
 
          if(s1==true&&sond==1){
