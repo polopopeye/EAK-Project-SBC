@@ -77,16 +77,15 @@ double jrsxB = iCustom(Symbol(),PERIOD_M5,"3c_turbo_jrsx_filtered",1,1);
 double jrsxS = iCustom(Symbol(),PERIOD_M5,"3c_turbo_jrsx_filtered",2,1);
 
 
-double pivotT1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",10080,1,0);//43200 10080 1440
-double pivotB1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",10080,5,0);
-double pivotN1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",1440,3,0);
+double pivotT1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",43200,10,0);//43200 10080 1440
+double pivotB1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",43200,11,0);
+double pivotN1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",43200,3,0);
 //double pivotNT1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",10080,2,0);
 //double pivotNB1 = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",10080,4,0);
 
 double pivotT=NormalizeDouble(pivotT1,10);
 double pivotB=NormalizeDouble(pivotB1,10);
 double pivotN=NormalizeDouble(pivotN1,10);
-
 
 double price=Ask;
 
@@ -106,7 +105,6 @@ if(price>pivotT&&pivotT!=EMPTY_VALUE&&pivotN<price){
 }
 }
 //}
-
 
 
 

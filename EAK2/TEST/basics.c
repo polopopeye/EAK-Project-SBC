@@ -113,7 +113,7 @@ ushort sep=StringGetCharacter(":",0);
 ushort seprow=StringGetCharacter("_",0);
 
 
-//if(Digits==3||Digits==5)point_compat=10;
+if(Digits==3||Digits==5)point_compat=10;
 //+------------------------------------------------------------------+
 //    INTERFACE
 //+------------------------------------------------------------------+
@@ -160,7 +160,6 @@ if(advanceddebug==true){
      ObjectSet(Symbol()+"Interface4",OBJPROP_XDISTANCE,300);
      ObjectSet(Symbol()+"Interface4",OBJPROP_YDISTANCE,65);
 }
-
 
 
   //------------------------------------------------------------------
@@ -455,10 +454,10 @@ bool s4=true;
 bool s5=true;
 bool s6=true;
 bool s7=true;
-bool s8=false;
-bool s9=false;
+bool s8=true;
+bool s9=true;
 bool s10=false;
-double activadasestrategias=7;
+double activadasestrategias=9;
 
 
 
@@ -639,7 +638,38 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
                }
              }
            }
-
+           if(s8==true&&sond==8){
+             double op18=iCustom(Symbol(),PERIOD_M5,"EAKsdtr2",1,0);
+             double cop18=iCustom(Symbol(),PERIOD_M5,"EAKsdtr2",2,0);
+             if(op18!=EMPTY_VALUE&&op18!=0){
+                   commentID="S8";
+                   op=op18;
+                   StrategyName="SDTR2 - S8";
+             }
+             if(posicionesS8C>0||posicionesS8V>0){
+               if(cop18!=EMPTY_VALUE&&cop18!=0){
+                     commentID="S8";
+                     cierreop=cop18;
+                     StrategyName="SDTR2 - S8";
+               }
+             }
+           }
+           if(s9==true&&sond==9){
+             double op19=iCustom(Symbol(),PERIOD_M5,"EAKsdtr3",1,0);
+             double cop19=iCustom(Symbol(),PERIOD_M5,"EAKsdtr3",2,0);
+             if(op19!=EMPTY_VALUE&&op19!=0){
+                   commentID="S9";
+                   op=op19;
+                   StrategyName="SDTR3 - S9";
+             }
+             if(posicionesS9C>0||posicionesS9V>0){
+               if(cop19!=EMPTY_VALUE&&cop19!=0){
+                     commentID="S9";
+                     cierreop=cop19;
+                     StrategyName="SDTR3 - S9";
+               }
+             }
+           }
 
              int posicionSB=0;
              double pfSGBC=0,pfSGBV=0;
@@ -923,20 +953,22 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
          //probabilidadmedia1=probabilidadmedia1+probabilidaditem;
          notamedia1=notamedia1+notaitem;
        if(OrderType()==OP_BUY){
-         totalopC=totalopC+1;
          profitmediobehaviorc=profitmediobehaviorc+OrderProfit();
          LotesmedioporoperacionbehaviourC=LotesmedioporoperacionbehaviourC+OrderLots();
          if(OrderProfit()>0){
            PFoperacionC=PFoperacionC+1;
          }
+         totalopC=totalopC+1;
+
        }
        if(OrderType()==OP_SELL){
-         totalopV=totalopV+1;
          profitmediobehaviorv=profitmediobehaviorv+OrderProfit();
        LotesmedioporoperacionbehaviourV=LotesmedioporoperacionbehaviourV+OrderLots();
          if(OrderProfit()>0){
            PFoperacionV=PFoperacionV+1;
          }
+         totalopV=totalopV+1;
+
        }
 
          }
@@ -987,14 +1019,18 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
          double Spf5=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",4,0);
          double Spf6=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",5,0);
          double Spf7=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",6,0);
+         double Spf8=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",7,0);
+         double Spf9=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",8,0);
 
-         double Snota1=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",7,0);
-         double Snota2=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",8,0);
-         double Snota3=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",9,0);
-         double Snota4=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",10,0);
-         double Snota5=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",11,0);
-         double Snota6=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",12,0);
-         double Snota7=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",13,0);
+         double Snota1=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",9,0);
+         double Snota2=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",10,0);
+         double Snota3=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",11,0);
+         double Snota4=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",12,0);
+         double Snota5=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",13,0);
+         double Snota6=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",14,0);
+         double Snota7=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",15,0);
+         double Snota8=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",16,0);
+         double Snota9=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",17,0);
          string stringSpf1="S"+Spf1;
          string stringSpf2="S"+Spf2;
          string stringSpf3="S"+Spf3;
@@ -1002,6 +1038,8 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
          string stringSpf5="S"+Spf5;
          string stringSpf6="S"+Spf6;
          string stringSpf7="S"+Spf7;
+         string stringSpf8="S"+Spf8;
+         string stringSpf9="S"+Spf9;
          string stringSnota1="S"+Snota1;
          string stringSnota2="S"+Snota2;
          string stringSnota3="S"+Snota3;
@@ -1009,24 +1047,30 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
          string stringSnota5="S"+Snota5;
          string stringSnota6="S"+Snota6;
          string stringSnota7="S"+Snota7;
+         string stringSnota8="S"+Snota8;
+         string stringSnota9="S"+Snota9;
          double relacionpuntexp=2/activadasestrategias;//0.45 //0.53
-       int punt1=7,punt2=6,punt3=5,punt4=4,punt5=3,punt6=2,punt7=2;
+       int punt1=9,punt2=8,punt3=7,punt4=6,punt5=5,punt6=4,punt7=3,punt8=2,punt9=2;
        double pfB=1,notaB=1;
-       if(stringSpf7==commentID)pfB=punt7*relacionpuntexp;
-       if(stringSpf6==commentID)pfB=punt6*relacionpuntexp;
-       if(stringSpf5==commentID)pfB=punt5*relacionpuntexp;
-       if(stringSpf4==commentID)pfB=punt4*relacionpuntexp;
-       if(stringSpf3==commentID)pfB=punt3*relacionpuntexp;
-       if(stringSpf2==commentID)pfB=punt2*relacionpuntexp;
        if(stringSpf1==commentID)pfB=punt1*relacionpuntexp;
+       if(stringSpf2==commentID)pfB=punt2*relacionpuntexp;
+       if(stringSpf3==commentID)pfB=punt3*relacionpuntexp;
+       if(stringSpf4==commentID)pfB=punt4*relacionpuntexp;
+       if(stringSpf5==commentID)pfB=punt5*relacionpuntexp;
+       if(stringSpf6==commentID)pfB=punt6*relacionpuntexp;
+       if(stringSpf7==commentID)pfB=punt7*relacionpuntexp;
+       if(stringSpf8==commentID)pfB=punt8*relacionpuntexp;
+       if(stringSpf9==commentID)pfB=punt9*relacionpuntexp;
 
-       if(stringSnota7==commentID)notaB=punt7*relacionpuntexp;
-       if(stringSnota6==commentID)notaB=punt6*relacionpuntexp;
-       if(stringSnota5==commentID)notaB=punt5*relacionpuntexp;
-       if(stringSnota4==commentID)notaB=punt4*relacionpuntexp;
-       if(stringSnota3==commentID)notaB=punt3*relacionpuntexp;
-       if(stringSnota2==commentID)notaB=punt2*relacionpuntexp;
        if(stringSnota1==commentID)notaB=punt1*relacionpuntexp;
+       if(stringSnota2==commentID)notaB=punt2*relacionpuntexp;
+       if(stringSnota3==commentID)notaB=punt3*relacionpuntexp;
+       if(stringSnota4==commentID)notaB=punt4*relacionpuntexp;
+       if(stringSnota5==commentID)notaB=punt5*relacionpuntexp;
+       if(stringSnota6==commentID)notaB=punt6*relacionpuntexp;
+       if(stringSnota7==commentID)notaB=punt7*relacionpuntexp;
+       if(stringSnota8==commentID)notaB=punt8*relacionpuntexp;
+       if(stringSnota9==commentID)notaB=punt9*relacionpuntexp;
 
        //  if(pfB<0.4)pfB=0.4;
        //  if(notaB<0.4)notaB=0.4;
@@ -1073,6 +1117,8 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
 
          double lotesposicionc=NormalizeDouble(lotesinicial*PRlotesC2,2);
          double lotesposicionv=NormalizeDouble(lotesinicial*PRlotesV2,2);
+        // double lotesposicionc=NormalizeDouble(lotesinicial,2);
+        // double lotesposicionv=NormalizeDouble(lotesinicial,2);
         // printf("pfB: "+pfB+"  _notaB:"+notaB+" _relacionpuntexp:"+relacionpuntexp);
 
        if(lotesposicionc<minlots)lotesposicionc=minlots;
@@ -1094,44 +1140,51 @@ if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
            //GRID 2 POSITIONALOTOFORDERS - POSITION A LOT OF ORDERS
            //------------------------------------------------------------------
            //esto esta bien, no permitir operaciones mas malas.
+
+
            int filter1c=3,filter1v=3;
 
-    int filterCtrue=0,filterVtrue=0;
-       double GridpipsC=10000,GridpipsV=10000;
+           int filterCtrue=0,filterVtrue=0;
+           double GridpipsC=10000,GridpipsV=10000;
+int cntfilter=0;
+           while(cntfilter<=OrdersTotal()){
+           if(OrderSelect(cntfilter,SELECT_BY_POS,MODE_TRADES)){
+           if(OrderSymbol()==Symbol()&&OrderComment()==commentID){
+           if(OrderType()==OP_BUY){
+           GridpipsC = MathAbs((NormalizeDouble(((OrderOpenPrice()-Bid)/MarketInfo(Symbol(),MODE_POINT)),MarketInfo(Symbol(),MODE_DIGITS)))/point_compat);
+           if(GridpipsC<gridposition)filterCtrue=filterCtrue+1;
+           }
+           if(OrderType()==OP_SELL){
+           GridpipsV = MathAbs((NormalizeDouble(((Ask-OrderOpenPrice())/MarketInfo(Symbol(),MODE_POINT)),MarketInfo(Symbol(),MODE_DIGITS)))/point_compat);
+           if(GridpipsV<gridposition)filterVtrue=filterVtrue+1;
+           }
+           }
+           }
+           cntfilter=cntfilter+1;
 
-for(int cntfilter=0 ;cntfilter<=OrdersTotal() ;cntfilter++){
-if(OrderSelect(cntfilter,SELECT_BY_POS,MODE_TRADES)){
-  if(OrderSymbol()==Symbol()&&OrderComment()==commentID){
-    if(OrderType()==OP_BUY){
-      GridpipsC = MathAbs((NormalizeDouble(((Bid-OrderOpenPrice())/MarketInfo(Symbol(),MODE_POINT)),MarketInfo(Symbol(),MODE_DIGITS)))/point_compat);
-      if(GridpipsC<gridposition)filterCtrue++;
-    }
-    if(OrderType()==OP_SELL){
-      GridpipsV = MathAbs((NormalizeDouble(((OrderOpenPrice()-Ask)/MarketInfo(Symbol(),MODE_POINT)),MarketInfo(Symbol(),MODE_DIGITS)))/point_compat);
-      if(GridpipsV<gridposition)filterVtrue++;
-    }
-  }
-}
-}
+           }
 
-
-       if(posicionSB==0){
-         filter1c=1;
-         filter1v=1;
-       }else{
-         if(filterCtrue>0){ //&&lastorderpS1<0
-          filter1c=0;
-         }else{
-           if(pfSGBC<0)filter1c=1;
-         }
-         if(filterVtrue>0){ //&&lastorderpS1<0
-          filter1v=0;
-        }else{
-          if(pfSGBV<0)filter1v=1;
-         }
+      if(posicionSB!=0){
+        if(filterCtrue>0){ //&&lastorderpS1<0
+         filter1c=0;
+        }
+        if(filterCtrue==0){
+          if(pfSGBC<0)filter1c=1;
+        }
+        if(filterVtrue>0){ //&&lastorderpS1<0
+         filter1v=0;
        }
+       if(filterVtrue==0){
+         if(pfSGBV<0)filter1v=1;
+        }
+      }
+         if(posicionSB<1){
+           filter1c=1;
+           filter1v=1;
+         }
 
-       bool actualordersend=false;
+
+       int actualordersend=0;
        int sendop;
        double lotsend;
        string strategysend,Nombrestrategia;
@@ -1142,37 +1195,85 @@ if(OrderSelect(cntfilter,SELECT_BY_POS,MODE_TRADES)){
        //  int cntopener=0;
          if(spreadvalue<maxspread){
            if(op==1&&filter1c==1&&commentID!="error"){
+int cntopener2=0;
+while(cntopener2<=OrdersTotal()){
+  if(OrderSelect(cntopener2,SELECT_BY_POS,MODE_TRADES)){
+    if(OrderSymbol()==Symbol()&&OrderComment()==commentID&&OrderType()==OP_BUY){
+    if(OrderOpenTime()==TimeCurrent()||OrderOpenTime()==Time[0]){
+      actualordersend=actualordersend+1;
+      printf("intento replica COMPRA por TIEMPO en"+cntopener2+" strategy"+commentID);
+    }
+    if(OrderOpenPrice()==Ask){
+      actualordersend=actualordersend+1;
+      printf("intento replica COMPRA por PRECIO en"+cntopener2+" strategy"+commentID);
+    }
+    if(OrderOpenPrice()==Bid){
+      actualordersend=actualordersend+1;
+      printf("intento replica COMPRA por PRECIO BID !!!!!!!! en"+cntopener2+" strategy"+commentID);
+    }
+}
+}
+cntopener2++;
 
-             actualordersend=true;
-             sendop=1;
-             strategysend=commentID;
-             lotsend=lotesposicionc;
-             Nombrestrategia=StrategyName;
+}
+if(actualordersend==0){
+  sendop=1;
+  strategysend=commentID;
+  lotsend=lotesposicionc;
+  Nombrestrategia=StrategyName;
 
 
-                 OrderSend(Symbol(),0,lotsend,Ask,Slippage,0,0,strategysend,MagicNumber,0,Blue);
-                 ObjectCreate(ChartID(),Time[0],OBJ_TEXT,0,TimeCurrent(),precio);
-                 ObjectSetString(ChartID(),Time[0],OBJPROP_TEXT,Nombrestrategia);
-                 ObjectSetString(ChartID(),Time[0],OBJPROP_FONT,"Arial");
-                ObjectSetInteger(ChartID(),Time[0],OBJPROP_FONTSIZE,"12");
-                ObjectSetInteger(ChartID(),Time[0],OBJPROP_COLOR,clrB);
+      OrderSend(Symbol(),0,lotsend,Ask,Slippage,0,0,strategysend,MagicNumber,0,Blue);
+      ObjectCreate(ChartID(),Time[0]+strategysend,OBJ_TEXT,0,TimeCurrent(),precio);
+      ObjectSetString(ChartID(),Time[0]+strategysend,OBJPROP_TEXT,Nombrestrategia);
+      ObjectSetString(ChartID(),Time[0]+strategysend,OBJPROP_FONT,"Arial");
+     ObjectSetInteger(ChartID(),Time[0]+strategysend,OBJPROP_FONTSIZE,"12");
+     ObjectSetInteger(ChartID(),Time[0]+strategysend,OBJPROP_COLOR,clrB);
 
+ printf("BUY:"+Ask+" _comment:"+commentID+" _Time:"+TimeCurrent());
+}
 
 
            }
            if(op==2&&filter1v==1&&commentID!="error"){
-             actualordersend=true;
-             sendop=2;
-             strategysend=commentID;
-             lotsend=lotesposicionv;
-             Nombrestrategia=StrategyName;
 
-               OrderSend(Symbol(),1,lotsend,Bid,Slippage,0,0,strategysend,MagicNumber,0,Red);
-              ObjectCreate(ChartID(),Time[0],OBJ_TEXT,0,TimeCurrent(),precio);
-              ObjectSetString(ChartID(),Time[0],OBJPROP_TEXT,Nombrestrategia);
-              ObjectSetString(ChartID(),Time[0],OBJPROP_FONT,"Arial");
-              ObjectSetInteger(ChartID(),Time[0],OBJPROP_FONTSIZE,"12");
-              ObjectSetInteger(ChartID(),Time[0],OBJPROP_COLOR,clrR);
+             int cntopener3=0;
+             while(cntopener3<=OrdersTotal()){
+               if(OrderSelect(cntopener3,SELECT_BY_POS,MODE_TRADES)){
+                 if(OrderSymbol()==Symbol()&&OrderComment()==commentID&&OrderType()==OP_SELL){
+                   if(OrderOpenTime()==TimeCurrent()||OrderOpenTime()==Time[0]){
+                     actualordersend=actualordersend+1;
+                     printf("intento replica VENTA por TIEMPO en"+cntopener3+" strategy"+commentID);
+                   }
+                   if(OrderOpenPrice()==Bid){
+                     actualordersend=actualordersend+1;
+                     printf("intento replica VENTA por PRECIO en"+cntopener3+" strategy"+commentID);
+                   }
+                   if(OrderOpenPrice()==Ask){
+                     actualordersend=actualordersend+1;
+                     printf("intento replica VENTA por PRECIO ASK !!!!!!!! en"+cntopener3+" strategy"+commentID);
+                   }
+             }
+             }
+             cntopener3++;
+
+             }
+
+
+if(actualordersend==0){
+  sendop=2;
+  strategysend=commentID;
+  lotsend=lotesposicionv;
+  Nombrestrategia=StrategyName;
+    OrderSend(Symbol(),1,lotsend,Bid,Slippage,0,0,strategysend,MagicNumber,0,Red);
+   ObjectCreate(ChartID(),Time[0]+strategysend,OBJ_TEXT,0,TimeCurrent(),precio);
+   ObjectSetString(ChartID(),Time[0]+strategysend,OBJPROP_TEXT,Nombrestrategia);
+   ObjectSetString(ChartID(),Time[0]+strategysend,OBJPROP_FONT,"Arial");
+   ObjectSetInteger(ChartID(),Time[0]+strategysend,OBJPROP_FONTSIZE,"12");
+   ObjectSetInteger(ChartID(),Time[0]+strategysend,OBJPROP_COLOR,clrR);
+   printf("SELL:"+Bid+" _comment:"+commentID+" _Time:"+TimeCurrent());
+}
+
 
 
            }
