@@ -9,7 +9,7 @@
 #property strict
 #property indicator_chart_window
 #property indicator_buffers 18
-extern int activadasestrategias=8;
+extern int activadasestrategias=9;
 double Buffer1[],Buffer2[],Buffer3[],Buffer4[],Buffer5[],Buffer6[],Buffer7[],Buffer8[],Buffer9[],Buffer10[],Buffer11[],Buffer12[],Buffer13[],Buffer14[],Buffer15[],Buffer16[],Buffer17[],Buffer18[];
 
 

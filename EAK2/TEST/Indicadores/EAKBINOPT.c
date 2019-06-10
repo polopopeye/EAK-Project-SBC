@@ -1,3 +1,4 @@
+
 //+------------------------------------------------------------------+
 //|                                       EAKextrapolatoravramis.mq4 |
 //|                              Kenneth Suarez, EAK, 2018, v.0.1.01 |
@@ -66,57 +67,84 @@ void start()
   {
 
 
-    double SMAcrossUP = iCustom(Symbol(),PERIOD_D1,"SMA CrossOver_Justin",1,1);
-    double SMAcrossDOWN = iCustom(Symbol(),PERIOD_D1,"SMA CrossOver_Justin",0,1);
+    double BuyArrow = iCustom(Symbol(),PERIOD_M5,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,4,1);
+    double SellArrow = iCustom(Symbol(),PERIOD_M5,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,5,1);
+    double BuyArrow2 = iCustom(Symbol(),PERIOD_M5,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,0,1);
+    double SellArrow2 = iCustom(Symbol(),PERIOD_M5,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,1,1);
 
-    double adxUP1 = iCustom(Symbol(),PERIOD_H4,"ADXcrossesNon-repainting",0,1);
-    double adxDOWN1 = iCustom(Symbol(),PERIOD_H4,"ADXcrossesNon-repainting",1,1);
 
-    double adxUP2 = iCustom(Symbol(),PERIOD_H4,"@@ADXcrossesNon-repainting",0,1);
-    double adxDOWN2 = iCustom(Symbol(),PERIOD_H4,"@@ADXcrossesNon-repainting",1,1);
+    double BuyArrowC = iCustom(Symbol(),PERIOD_H1,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,4,1);
+    double SellArrowC = iCustom(Symbol(),PERIOD_H1,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,5,1);
 
-    double TrendUP = iCustom(Symbol(),PERIOD_H4,"SuperTrend",0,0);
-    double TrendDOWN = iCustom(Symbol(),PERIOD_H4,"SuperTrend",1,0);
+    double c1semaforindv2B = iCustom(Symbol(),PERIOD_M15,"semaforov2eak",4,1);//COMPRA
+    double c1semaforindv2S = iCustom(Symbol(),PERIOD_M15,"semaforov2eak",5,1);//VENTA
 
+    //double stB = iCustom(Symbol(),PERIOD_M5,"SuperTrend",0,0);//compra
+    //double stS = iCustom(Symbol(),PERIOD_M5,"SuperTrend",1,0);//compra
+    double stB = 1;//compra
+    double stS = 1;//compra
+
+
+    // double BuyArrowC2 = iCustom(Symbol(),PERIOD_H1,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,0,1);
+    // double SellArrowC2 = iCustom(Symbol(),PERIOD_H1,"BuySellArrowScalper_V2.0",2,true,true,false,false,false,false,false,1,1);
 //-------------------------------------------------------
-    //
-    // double adxUP12 = iCustom(Symbol(),PERIOD_H1,"ADXcrossesNon-repainting",0,1);
-    // double adxDOWN12 = iCustom(Symbol(),PERIOD_H1,"ADXcrossesNon-repainting",1,1);
-    //
-    // double adxUP22 = iCustom(Symbol(),PERIOD_H1,"@@ADXcrossesNon-repainting",0,1);
-    // double adxDOWN22 = iCustom(Symbol(),PERIOD_H1,"@@ADXcrossesNon-repainting",1,1);
-    // double TrendUP2 = iCustom(Symbol(),PERIOD_M5,"SuperTrend",0,0);
-    // double TrendDOWN2 = iCustom(Symbol(),PERIOD_M5,"SuperTrend",1,0);
+double pivotN = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",1440,3,0);//43200 10080 1440
+double pivotNT = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",1440,1,0);//43200 10080 1440
+double pivotNB = iCustom(Symbol(),PERIOD_M5,"Pivot_Voty",1440,5,0);//43200 10080 1440
 
-int sma=0;
+int extremo=0;
+// if(Ask>pivotN&&Ask<pivotNT)extremo=2;
+// if(Ask<pivotN&&Ask>pivotNT)extremo=3;
+if((Ask>pivotNB&&Ask<pivotNT)||(Bid>pivotNB&&Bid<pivotNT))extremo=5;
+if(Ask<pivotNB||Bid<pivotNB)extremo=4;
+if(Ask>pivotNT||Bid>pivotNT)extremo=1;
 
-if(SMAcrossUP!=EMPTY_VALUE&&SMAcrossUP!=0)sma=1;
-if(SMAcrossDOWN!=EMPTY_VALUE&&SMAcrossDOWN!=0)sma=2;
+//printf("ex"+extremo);
 
-if(Buffer1[1]==1&&sma==0)Buffer1[0]=1;
-if(Buffer1[1]==2&&sma==0)Buffer1[0]=2;
-if(sma==1)Buffer1[0]=1;
-if(sma==2)Buffer1[0]=2;
+if(extremo==5){
+  if(c1semaforindv2B!=0&&c1semaforindv2B!=EMPTY_VALUE&&stB!=0&&stB!=EMPTY_VALUE){
+    Buffer2[0]=1;
+  }
+  if(c1semaforindv2S!=0&&c1semaforindv2S!=EMPTY_VALUE&&stS!=0&&stS!=EMPTY_VALUE){
+    Buffer2[0]=2;
+  }
+
+// if(BuyArrow!=0&&BuyArrow!=EMPTY_VALUE){
+//   Buffer2[0]=1;
+// }
+// if(SellArrow!=0&&SellArrow!=EMPTY_VALUE){
+//   Buffer2[0]=2;
+// }
+}
 
 
+// if(BuyArrow!=0&&BuyArrow!=EMPTY_VALUE&&BuyArrow2!=0&&BuyArrow2!=EMPTY_VALUE){//&&stB!=0&&stB!=EMPTY_VALUE(extremo==2||extremo==4)
+// Buffer2[0]=1;
+// Buffer3[0]=2;
+//
+// }
+// if(SellArrow!=0&&SellArrow!=EMPTY_VALUE&&SellArrow2!=0&&SellArrow2!=EMPTY_VALUE){//&&stS!=0&&stS!=EMPTY_VALUE&&(extremo==3||extremo==1)
+// Buffer2[0]=2;
+// Buffer3[0]=1;
+//
+// }
 
 
-if(Buffer1[0]!=EMPTY_VALUE&&Buffer1[0]!=0){
-if(Buffer1[0]==1&&adxUP1!=EMPTY_VALUE&&adxUP1!=0&&adxUP2!=EMPTY_VALUE&&adxUP2!=0){//&&TrendUP!=EMPTY_VALUE&&TrendUP!=0
-Buffer2[0]=1;
+if(c1semaforindv2B!=0&&c1semaforindv2B!=EMPTY_VALUE){//
 Buffer3[0]=2;
 }
-if(Buffer1[0]==2&&adxDOWN1!=EMPTY_VALUE&&adxDOWN1!=0&&adxDOWN2!=EMPTY_VALUE&&adxDOWN2!=0){//&&TrendDOWN!=EMPTY_VALUE&&TrendDOWN!=0
-Buffer2[0]=2;
+if(c1semaforindv2S!=0&&c1semaforindv2S!=EMPTY_VALUE){//
 Buffer3[0]=1;
 }
-//Buffer1[0]==1&&
-  }
-  // if(Buffer1[0]==1&&adxUP12!=EMPTY_VALUE&&adxUP12!=0&&adxUP22!=EMPTY_VALUE&&adxUP22!=0&&TrendUP2!=EMPTY_VALUE&&TrendUP2!=0){//
-  // }
-  // //Buffer1[0]==2&&
-  // if(Buffer1[0]==2&&adxDOWN12!=EMPTY_VALUE&&adxDOWN12!=0&&adxDOWN22!=EMPTY_VALUE&&adxDOWN22!=0&&TrendDOWN2!=EMPTY_VALUE&&TrendDOWN2!=0){//
-  // }
+if(extremo==1){
+  Buffer3[0]=2;
+}
+if(extremo==4){
+  Buffer3[0]=1;
+}
+
+
 
   }
 //+------------------------------------------------------------------+
+//RESULTADOS ESTRATEGIA

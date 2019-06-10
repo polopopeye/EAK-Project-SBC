@@ -1,0 +1,40 @@
+2015 1 -> Tiene H1
+2015 2 -> Tiene H1 pero en periodo anterior (PA).
+2015 3 -> Tiene M30 PA con pivot neutro (PN) ayuda a la tendencia que se esta creando. [B]
+2015 3.1 -> Tiene M30 PA,PN>,evitando tradear en extremos de pivot ,RyS62 (NOEXT).
+2015 3.2 -> Tiene M30 PA y H1 en Cierre,PN>,NOEXT. [B]
+2015 3.3 -> Tiene H1 PA y H1 en Cierre,PN>,NOEXT. [N]B
+2015 3.3.1 -> Tiene H4 PA y H4 en Cierre,NOEXT. [N]
+2015 3.4 -> Tiene H4 PA y H4 en Cierre,PN>,NOEXT. [N]
+2015 3.5 -> Tiene H1 PA y H4 en Cierre,PN>,NOEXT. [N]
+2015 3.6 -> Tiene M15 PA y M30 en Cierre,PN>,NOEXT. [N]
+2015 3.7 -> Tiene M15 PA y H1 en Cierre,PN>,NOEXT. [N]
+
+2015 4.0 -> Tiene H1 PA y H4 en Cierre,PN>,EXT, si en extremos cambio op. [N]
+
+
+
+
+2015 3.? -> Tiene H4 PA,PN>,NOEXT.
+2015 3.? -> Tiene M15 PA,PN>,NOEXT.
+2015 3.? -> Tiene M5 PA,PN>,NOEXT.
+2015 4 -> Tiene M30 PA,PN con Ask(<)pivotN para compra antes > aperturas en extremos.
+2015 5 -> Tiene M30 PA,con indicador de tendencia Supertrend en h4 (STM30).
+2015 5.1 -> Tiene M30 PA,STH4,[N]
+2015 5.2 -> Tiene M30 PA,STD1,
+
+Ideas
+
+Poner pivot points como semafor, para el cierre de aperturas y seria interesante ver la apertura btw.
+
+Al parecer el 3 ha tenido exito, seria interesante probar con otro indicador de tendencia
+La tendencia a potenciar H1 va bien, podria ser bueno probar con varias configuraciones.
+
+Pivot points en vez de un punto neutro una franja.
+
+
+
+En principio la idea del sistema es que el mercado se mueve en una franja de precios.
+para un mercado con tendencia definida. se tienen que aprovechar los retrocesos.
+
+esto es util cuando el movimiento de precios es lateral,
