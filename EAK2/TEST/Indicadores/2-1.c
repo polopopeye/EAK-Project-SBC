@@ -14,7 +14,7 @@ double Buffer2[];
 double Buffer3[];
 double Buffer4[];
 double Buffer5[];
-extern string sistema="S1";
+
 
 
 //+------------------------------------------------------------------+
@@ -75,9 +75,8 @@ void start()
      double tendopenV = iCustom(Symbol(),0,"SuperTrend",600,3.5,1,0);//43200 10080 1440
     // double tendC2 = iCustom(Symbol(),PERIOD_M5,"SuperTrend",1000,15.0,0,0);//43200 10080 1440
     // double tendV2 = iCustom(Symbol(),PERIOD_M5,"SuperTrend",1000,15.0,1,0);//43200 10080 1440
-    double sentimentC = iCustom(Symbol(),0,"Symphonie_Sentiment_Indikator",1960,1,0);//65//20.0
-    double sentimentV = iCustom(Symbol(),0,"Symphonie_Sentiment_Indikator",1960,2,0);//65//20.0
-    double volatility = iCustom(Symbol(),0,"volatility-indicator-2",60,0.6,1,0);//65//20.0
+    double sentimentC = iCustom(Symbol(),0,"Symphonie_Sentiment_Indikator",120,1,0);//65//20.0
+    double sentimentV = iCustom(Symbol(),0,"Symphonie_Sentiment_Indikator",120,2,0);//65//20.0
 
 
 //---------------------------------------------------------
@@ -85,10 +84,10 @@ void start()
 //---------------------------------------------------------
 
 
+
 int opsend=0,opsend2=0,tend=0,tend2=0,tend3=0,tend4=0,tendopen=0,compra=0,venta=0,tiempoC=0,tiempoV=0;
 double dineritoC=0,dineritoV=0,timeelapsedC=0,timeelapsedV=0;
-int permitirC=0,permitirV=0, volatilityhigh=0;
-if(volatility>0&&volatility!=EMPTY_VALUE)volatilityhigh=1;
+int permitirC=0,permitirV=0;
 
 if(inrmi>70)opsend=2;//70 30
 if(inrmi<30)opsend=1;
@@ -109,14 +108,14 @@ if(tendopenV!=EMPTY_VALUE&&tendopenV!=0)tendopen=2;
 for(int cnt;cnt<OrdersTotal();cnt++){
 
   OrderSelect(cnt,SELECT_BY_POS,MODE_TRADES);
-  if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()&&OrderComment()==sistema){
+  if(OrderType()==OP_BUY&&OrderSymbol()==Symbol()){
     timeelapsedC=TimeCurrent()-OrderOpenTime();
-    dineritoC=OrderProfit()+dineritoC+OrderSwap()+OrderCommission();
+    dineritoC=OrderProfit()+dineritoC;
     compra++;
   }
-  if(OrderType()==OP_SELL&&OrderSymbol()==Symbol()&&OrderComment()==sistema){
+  if(OrderType()==OP_SELL&&OrderSymbol()==Symbol()){
     timeelapsedV=TimeCurrent()-OrderOpenTime();
-    dineritoV=OrderProfit()+dineritoV+OrderSwap()+OrderCommission();
+    dineritoV=OrderProfit()+dineritoV;
     venta++;
   }
   // if(timeelapsedC>86400){
@@ -134,8 +133,8 @@ for(int cnt;cnt<OrdersTotal();cnt++){
 }
 // if(tend2==2&&venta>0)Buffer3[0]=1;
 // if(tend2==1&&compra>0)Buffer3[0]=2;
-if(opsend2==1&&opsend!=2&&dineritoV>0.1&&tiempoV==1)Buffer3[0]=2;
-if(opsend2==2&&opsend!=1&&dineritoC>0.1&&tiempoC==1)Buffer3[0]=1;
+if(opsend2==1&&opsend!=2&&dineritoV>0&&tiempoV==1)Buffer3[0]=2;
+if(opsend2==2&&opsend!=1&&dineritoC>0&&tiempoC==1)Buffer3[0]=1;
 if(opsend2==1&&opsend!=2&&tiempoV==0)Buffer3[0]=2;
 if(opsend2==2&&opsend!=1&&tiempoC==0)Buffer3[0]=1;
 
@@ -148,8 +147,8 @@ if(opsend2==2&&opsend!=1&&tiempoC==0)Buffer3[0]=1;
 // if(opsend==2&&tendopen==2&&tend3==2&&tend==2)Buffer2[0]=2;
 
 //&&tendopen==1&&tend==1&&tend3==1 //&&tendopen==2&&tend==2&&tend3==2
-if(volatilityhigh==0&&opsend2==1&&tend4==1)Buffer2[0]=1;//opsend==1&&&&tend3==1 &&tend==1
-if(volatilityhigh==0&&opsend2==2&&tend4==2)Buffer2[0]=2; //&&tend3==1&&tend==1opsend2==1&&tend2==1
+if(opsend2==1&&tend4==1)Buffer2[0]=1;//opsend==1&&&&tend3==1 &&tend==1
+if(opsend2==2&&tend4==2)Buffer2[0]=2; //&&tend3==1&&tend==1opsend2==1&&tend2==1
 
 if(tend3==2&&compra>0&&Buffer2[0]!=1)Buffer3[0]=1;
 if(tend3==1&&venta>0&&Buffer2[0]!=2)Buffer3[0]=2;

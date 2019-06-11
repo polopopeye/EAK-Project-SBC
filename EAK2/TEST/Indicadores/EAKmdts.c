@@ -84,14 +84,14 @@ void start()
 
 //CONFIG 1
 
-double qqe1 = iCustom(Symbol(),PERIOD_D1,"###QQE_Alert_MTF_v5###",0,0);
-double qqe2 = iCustom(Symbol(),PERIOD_D1,"###QQE_Alert_MTF_v5###",1,0);
+double qqe1 = iCustom(Symbol(),0,"###QQE_Alert_MTF_v5###",0,0);
+double qqe2 = iCustom(Symbol(),0,"###QQE_Alert_MTF_v5###",1,0);
 
-double qqe3 = iCustom(Symbol(),PERIOD_H4,"###QQE_Alert_MTF_v5###",0,0);
-double qqe4 = iCustom(Symbol(),PERIOD_H4,"###QQE_Alert_MTF_v5###",1,0);
+double qqe3 = iCustom(Symbol(),0,"###QQE_Alert_MTF_v5###",0,0);
+double qqe4 = iCustom(Symbol(),0,"###QQE_Alert_MTF_v5###",1,0);
 
-double qqtopen1 = iCustom(Symbol(),PERIOD_D1,"#MTF_QQEA_Hist_Alert",0,5,14,4.236,60,40,false,false,false,false,false,false,0,0);
-double qqtopen2 = iCustom(Symbol(),PERIOD_D1,"#MTF_QQEA_Hist_Alert",0,5,14,4.236,60,40,false,false,false,false,false,false,1,0);
+double qqtopen1 = iCustom(Symbol(),0,"#MTF_QQEA_Hist_Alert",0,5,14,4.236,60,40,false,false,false,false,false,false,0,0);
+double qqtopen2 = iCustom(Symbol(),0,"#MTF_QQEA_Hist_Alert",0,5,14,4.236,60,40,false,false,false,false,false,false,1,0);
 
 
 

@@ -63,15 +63,15 @@ SetIndexLabel(4,"CicloV");
 void start()
   {
 
-    double orderopC = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",8,1);//43200 10080 1440
-    double orderopV = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",9,1);//43200 10080 1440
-    double up = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",10,1);//43200 10080 1440
-    double down = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",11,1);//43200 10080 1440
-    double exitwin = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",18,1);//43200 10080 1440
-    double exitloss = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",19,1);//43200 10080 1440
-    double tp1hit = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",20,1);//43200 10080 1440
-    double tp2hit = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",21,1);//43200 10080 1440
-    double sucessrate = iCustom(Symbol(),PERIOD_M30,"PipFinite Trend PRO",29,1);//43200 10080 1440
+    double orderopC = iCustom(Symbol(),0,"PipFinite Trend PRO",8,1);//43200 10080 1440
+    double orderopV = iCustom(Symbol(),0,"PipFinite Trend PRO",9,1);//43200 10080 1440
+    double up = iCustom(Symbol(),0,"PipFinite Trend PRO",10,1);//43200 10080 1440
+    double down = iCustom(Symbol(),0,"PipFinite Trend PRO",11,1);//43200 10080 1440
+    double exitwin = iCustom(Symbol(),0,"PipFinite Trend PRO",18,1);//43200 10080 1440
+    double exitloss = iCustom(Symbol(),0,"PipFinite Trend PRO",19,1);//43200 10080 1440
+    double tp1hit = iCustom(Symbol(),0,"PipFinite Trend PRO",20,1);//43200 10080 1440
+    double tp2hit = iCustom(Symbol(),0,"PipFinite Trend PRO",21,1);//43200 10080 1440
+    double sucessrate = iCustom(Symbol(),0,"PipFinite Trend PRO",29,1);//43200 10080 1440
 
 //     printf("opC"+orderopC+"_ opV"+orderopV+"_ eloss"+exitloss+"_ ewin"+exitwin);
 // printf("_ tp1"+tp1op+"_ tp2"+tp2op+"_ up"+up+"_ down"+down);
@@ -104,20 +104,20 @@ if(OrdersTotal()>0){
 
 
 if(sucessrate>70){
-  if(up>down){
+  //if(up>down){
     if(orderopC!=0&&permitir==1)Buffer2[0]=1;
     if(tp1hit>0)Buffer3[0]=1;
     //if(tp2hit>0)Buffer3[0]=1;
     if(exitwin>0)Buffer3[0]=1;
       if(exitloss>0)Buffer3[0]=1;
-  }
-  if(down>up){
+  //}
+  //if(down>up){
     if(orderopV!=0&&permitir==1)Buffer2[0]=2;
     if(tp1hit>0)Buffer3[0]=2;
   //if(tp2hit>0)Buffer3[0]=2;
   if(exitwin>0)Buffer3[0]=2;
     if(exitloss>0)Buffer3[0]=2;
-  }
+  //}
 
 }
 
