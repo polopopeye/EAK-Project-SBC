@@ -24,7 +24,7 @@ string commentID="error";
 
 extern string GESTIONLOTES="METODO 1 MARTINGALE, METODO 2 EN CONSTRUCCION --------------";
  int gestionlotesmethod=4;
-extern double lotesinicial=0.1; //first lot
+extern double lotesinicial=0.01; //first lot
 
  string GRID="POSITION FIJA EN PIPS A PARTIR DE UNA OPERACION ABIERTA";
  bool filternegativeopenorders=false;
@@ -87,8 +87,7 @@ if(debugoption==true){
   if(advanceddebug==true)ObjectCreate(Symbol()+"channel",OBJ_LABEL,0,0,0,0);
   if(advanceddebug==true)ObjectCreate(Symbol()+"tpmpV",OBJ_LABEL,0,0,0,0);
   if(advanceddebug==true)ObjectCreate(Symbol()+"tpmpC",OBJ_LABEL,0,0,0,0);
-  if(Extrapolatorind==true)ObjectCreate(Symbol()+"Extrapolator",OBJ_LABEL,0,0,0,0);
-  if(debugoption==true)ObjectCreate(Symbol()+"lotesop",OBJ_LABEL,0,0,0,0);
+
 }
 
 
@@ -105,15 +104,15 @@ if(debugoption==true){
 void OnTick()
   {
 int point_compat=1;
+if(Digits==3||Digits==5)point_compat=10;
 
-
-double gridposition=10; //pips on every new trade
+double gridposition=6; //pips on every new trade
 
 ushort sep=StringGetCharacter(":",0);
 ushort seprow=StringGetCharacter("_",0);
 
 
-if(Digits==3||Digits==5)point_compat=10;
+
 //+------------------------------------------------------------------+
 //    INTERFACE
 //+------------------------------------------------------------------+
@@ -457,7 +456,7 @@ bool s7=false;
 bool s8=false;
 bool s9=false;
 bool s10=false;
-double activadasestrategias=8;
+double activadasestrategias=2;
 
 
 
@@ -471,7 +470,7 @@ double activadasestrategias=8;
 string StrategyName="NONE";
 
 double MyPoint=Point;
-if(TotalOrdersCount()>150)Alert("DEMASIADAS OPERACIONES EN "+Symbol());
+//if(TotalOrdersCount()>150)printf("DEMASIADAS OPERACIONES EN "+Symbol());
 if(TotalOrdersCount()>=0&&TotalOrdersCount()<199)
 {
 
@@ -482,109 +481,43 @@ string FileDBarchivosSG="S"+sond+Symbol()+".eakdb";
 string FileDBarchivosRG="R"+FileDBarchivosSG;
 
 
-//
-// if(s1==true&&sond==1){
-//   double op41=iCustom(Symbol(),PERIOD_M5,"EAKvssta",1,0);
-//   double cop41=iCustom(Symbol(),PERIOD_M5,"EAKvssta",2,0);
-//   if(op41!=EMPTY_VALUE&&op41!=0){
-//         commentID="S1";
-//         op=op41;
-//         StrategyName="VSSTA - TESTER";
-//   }
-
-//     if(cop41!=EMPTY_VALUE&&cop41!=0){
-//           commentID="S1";
-//                     cierreop=cop41;
-//           StrategyName="VSSTA - TESTER";
-//     }
-
-// }
-
-
-
-if(s2==true&&sond==2){
- double op1=iCustom(Symbol(),PERIOD_M5,"2",1,0);
- double cop1=iCustom(Symbol(),PERIOD_M5,"2",2,0);
- if(op1!=EMPTY_VALUE&&op1!=0){
-       commentID="S2";
-       op=op1;
-       StrategyName="S2";
-
- }
-
- if(cop1!=EMPTY_VALUE&&cop1!=0){
-       commentID="S2";
-       cierreop=cop1;
-       StrategyName="S2";
-
- }
-
-
-}
-
-//
-// if(s2==true&&sond==1){
-//  double op4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",1,0);
-//  double cop4=iCustom(Symbol(),PERIOD_M5,"EAKrmi",2,0);
-//  if(op4!=EMPTY_VALUE&&op4!=0){
-//        commentID="S1";
-//        op=op4;
-//        StrategyName="RMI - S1";
-//  }
-//
-//    if(cop4!=EMPTY_VALUE&&cop4!=0){
-//          commentID="S1";
-//          cierreop=cop4;
-//          StrategyName="RMI - S1";
-//    }
-//
-// }
-//
-// if(s2==true&&sond==2){
-//  double op1=iCustom(Symbol(),PERIOD_M5,"EAKyzyz",1,0);
-//  double cop1=iCustom(Symbol(),PERIOD_M5,"EAKyzyz",2,0);
-//  if(op1!=EMPTY_VALUE&&op1!=0){
-//        commentID="S2";
-//        op=op1;
-//        StrategyName="YZYZ - S2";
-//
-//  }
-//
-//  if(cop1!=EMPTY_VALUE&&cop1!=0){
-//        commentID="S2";
-//        cierreop=cop1;
-//        StrategyName="YZYZ - S2";
-//
-//  }
-//
-//
-// }
-
-
 if(s1==true&&sond==1){
- double op5=iCustom(Symbol(),PERIOD_M5,"EAKBINOPT",1,0);
- double cop5=iCustom(Symbol(),PERIOD_M5,"EAKBINOPT",2,0);
+ double op5=iCustom(Symbol(),PERIOD_M1,"EAK2c","S1",1,0);
+ double cop5=iCustom(Symbol(),PERIOD_M1,"EAK2c","S1",2,0);
  if(op5!=EMPTY_VALUE&&op5!=0){
        commentID="S1";
        op=op5;
        StrategyName="S1";
-
  }
-
  if(cop5!=EMPTY_VALUE&&cop5!=0){
        commentID="S1";
        cierreop=cop5;
        StrategyName="S1";
-
      }
-
 }
 
+if(s2==true&&sond==2){
+ double op1=iCustom(Symbol(),PERIOD_M1,"EAK3c","S2",1,0);
+ double cop1=iCustom(Symbol(),PERIOD_M1,"EAK3c","S2",2,0);
+ if(op1!=EMPTY_VALUE&&op1!=0){
+       commentID="S2";
+       op=op1;
+       StrategyName="S2";
+ }
+ if(cop1!=EMPTY_VALUE&&cop1!=0){
+       commentID="S2";
+       cierreop=cop1;
+       StrategyName="S2";
+ }
+}
+
+
+
  if(s4==true&&sond==4){
-   double op6=iCustom(Symbol(),PERIOD_M5,"EAKsymphonie2",1,0);
-   double cop6=iCustom(Symbol(),PERIOD_M5,"EAKsymphonie2",2,0);
+   double op6=iCustom(Symbol(),PERIOD_M5,"EAK3c",1,0);
+   double cop6=iCustom(Symbol(),PERIOD_M5,"EAK3c",2,0);
    if(op6!=EMPTY_VALUE&&op6!=0){
-         commentID="S4";
+         commentID="S3";
          op=op6;
          StrategyName="Symphonie2 - S4";
 
@@ -666,106 +599,106 @@ if(s1==true&&sond==1){
 
  }
 
-   int posicionSB=0;
+   int posicionSBC=0,posicionSBV=0;;
    double pfSGBC=0,pfSGBV=0;
    if(commentID=="S1"){
      pfSGBC=pfS1C;
      pfSGBV=pfS1V;
      if(op==1){
-       posicionSB=posicionesS1C;
+       posicionSBC=posicionesS1C;
      }
      if(op==2){
-       posicionSB=posicionesS1V;
+       posicionSBV=posicionesS1V;
      }
    }
    if(commentID=="S2"){
      pfSGBC=pfS2C;
      pfSGBV=pfS2V;
      if(op==1){
-       posicionSB=posicionesS2C;
+       posicionSBC=posicionesS2C;
      }
      if(op==2){
-       posicionSB=posicionesS2V;
+       posicionSBV=posicionesS2V;
      }
    }
    if(commentID=="S3"){
      pfSGBC=pfS3C;
      pfSGBV=pfS3V;
      if(op==1){
-       posicionSB=posicionesS3C;
+       posicionSBC=posicionesS3C;
      }
      if(op==2){
-       posicionSB=posicionesS3V;
+       posicionSBV=posicionesS3V;
      }
    }
    if(commentID=="S4"){
      pfSGBC=pfS4C;
      pfSGBV=pfS4V;
      if(op==1){
-       posicionSB=posicionesS4C;
+       posicionSBC=posicionesS4C;
      }
      if(op==2){
-       posicionSB=posicionesS4V;
+       posicionSBV=posicionesS4V;
      }
    }
    if(commentID=="S5"){
      pfSGBC=pfS5C;
      pfSGBV=pfS5V;
      if(op==1){
-       posicionSB=posicionesS5C;
+       posicionSBC=posicionesS5C;
      }
      if(op==2){
-       posicionSB=posicionesS5V;
+       posicionSBV=posicionesS5V;
      }
    }
    if(commentID=="S6"){
      pfSGBC=pfS6C;
      pfSGBV=pfS6V;
      if(op==1){
-       posicionSB=posicionesS6C;
+       posicionSBC=posicionesS6C;
      }
      if(op==2){
-       posicionSB=posicionesS6V;
+       posicionSBV=posicionesS6V;
      }
    }
    if(commentID=="S7"){
      pfSGBC=pfS7C;
      pfSGBV=pfS7V;
      if(op==1){
-       posicionSB=posicionesS7C;
+       posicionSBC=posicionesS7C;
      }
      if(op==2){
-       posicionSB=posicionesS7V;
+       posicionSBV=posicionesS7V;
      }
    }
    if(commentID=="S8"){
      pfSGBC=pfS8C;
      pfSGBV=pfS8V;
      if(op==1){
-       posicionSB=posicionesS8C;
+       posicionSBC=posicionesS8C;
      }
      if(op==2){
-       posicionSB=posicionesS8V;
+       posicionSBV=posicionesS8V;
      }
    }
    if(commentID=="S9"){
      pfSGBC=pfS9C;
      pfSGBV=pfS9V;
      if(op==1){
-       posicionSB=posicionesS9C;
+       posicionSBC=posicionesS9C;
      }
      if(op==2){
-       posicionSB=posicionesS9V;
+       posicionSBV=posicionesS9V;
      }
    }
    if(commentID=="S10"){
      pfSGBC=pfS10C;
      pfSGBV=pfS10V;
      if(op==1){
-       posicionSB=posicionesS10C;
+       posicionSBC=posicionesS10C;
      }
      if(op==2){
-       posicionSB=posicionesS10V;
+       posicionSBV=posicionesS10V;
      }
    }
 
@@ -788,7 +721,7 @@ for(int cnta1=0;cnta1<OrdersTotal();cnta1++){
   bool cierre=false;
 
  if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber){
-   SegundosElapsed=TimeCurrent()-OrderOpenTime();//tiempo en segundos
+   SegundosElapsed=(int)TimeCurrent()-(int)OrderOpenTime();//tiempo en segundos
 
    //------------------------------------------------------------------
    // CIERRE
@@ -812,7 +745,7 @@ if(FileIsExist(FileDBarchivos2)){
 
 
 double TiempoElapsedBehavior=SegundosElapsed;
-if(TiempoElapsedBehavior>0){
+if(TiempoElapsedBehavior>61){
  double FProfitBehavior2=(OrderProfit()/OrderLots())/TiempoElapsedBehavior;
 
  if(OrderComment()==commentID){
@@ -1007,25 +940,25 @@ factorprofit=Profitmedioporoperacion2/Lotesmedioporoperacion2behaviour;
  //-----------------------------------------------------------
 
 
-double Spf1=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,0,0);
-double Spf2=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,1,0);
-double Spf3=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,2,0);
-double Spf4=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,3,0);
-double Spf5=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,4,0);
-double Spf6=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,5,0);
-double Spf7=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,6,0);
-double Spf8=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,7,0);
-double Spf9=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,8,0);
+double Spf1=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,0,0);
+double Spf2=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,1,0);
+double Spf3=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,2,0);
+double Spf4=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,3,0);
+double Spf5=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,4,0);
+double Spf6=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,5,0);
+double Spf7=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,6,0);
+double Spf8=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,7,0);
+double Spf9=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,8,0);
 
-double Snota1=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,9,0);
-double Snota2=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,10,0);
-double Snota3=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,11,0);
-double Snota4=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,12,0);
-double Snota5=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,13,0);
-double Snota6=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,14,0);
-double Snota7=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,15,0);
-double Snota8=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,16,0);
-double Snota9=iCustom(Symbol(),PERIOD_M5,"EAKbuildPF",activadasestrategias,17,0);
+double Snota1=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,9,0);
+double Snota2=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,10,0);
+double Snota3=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,11,0);
+double Snota4=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,12,0);
+double Snota5=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,13,0);
+double Snota6=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,14,0);
+double Snota7=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,15,0);
+double Snota8=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,16,0);
+double Snota9=iCustom(Symbol(),0,"EAKbuildPF",activadasestrategias,17,0);
 string stringSpf1="S"+Spf1;
 string stringSpf2="S"+Spf2;
 string stringSpf3="S"+Spf3;
@@ -1159,13 +1092,18 @@ int cntfilter=0;
 
  }
 
-if(posicionSB!=0){
+if(posicionSBC!=0){
 if(filterCtrue>0){ //&&lastorderpS1<0
 filter1c=0;
 }
 if(filterCtrue==0){
 if(pfSGBC<0)filter1c=1;
 }
+}
+if(posicionSBC<1){
+ filter1c=1;
+}
+if(posicionSBV!=0){
 if(filterVtrue>0){ //&&lastorderpS1<0
 filter1v=0;
 }
@@ -1173,11 +1111,9 @@ if(filterVtrue==0){
 if(pfSGBV<0)filter1v=1;
 }
 }
-if(posicionSB<1){
- filter1c=1;
+if(posicionSBV<1){
  filter1v=1;
 }
-
 
 int actualordersend=0;
 int sendop;
@@ -1188,13 +1124,16 @@ double precio=SymbolInfoDouble(Symbol(),SYMBOL_BID);
 color clrR=clrRed;
 color clrB=clrBlue;
 //  int cntopener=0;
+int lapso=60;
+
 if(spreadvalue<maxspread){
  if(op==1&&filter1c==1&&commentID!="error"){
 int cntopener2=0;
 while(cntopener2<=OrdersTotal()){
 if(OrderSelect(cntopener2,SELECT_BY_POS,MODE_TRADES)){
 if(OrderSymbol()==Symbol()&&OrderComment()==commentID&&OrderType()==OP_BUY){
-if(OrderOpenTime()==TimeCurrent()||OrderOpenTime()==Time[0]){
+  int elapsed1=(int)TimeCurrent()-(int)OrderOpenTime();
+if(elapsed1<lapso||OrderOpenTime()==Time[0]){
 actualordersend=actualordersend+1;
 printf("intento replica COMPRA por TIEMPO en"+cntopener2+" strategy"+commentID);
 }
@@ -1236,7 +1175,9 @@ printf("BUY:"+Ask+" _comment:"+commentID+" _Time:"+TimeCurrent());
    while(cntopener3<=OrdersTotal()){
      if(OrderSelect(cntopener3,SELECT_BY_POS,MODE_TRADES)){
        if(OrderSymbol()==Symbol()&&OrderComment()==commentID&&OrderType()==OP_SELL){
-         if(OrderOpenTime()==TimeCurrent()||OrderOpenTime()==Time[0]){
+         int elapsed2=(int)TimeCurrent()-(int)OrderOpenTime();
+
+         if(elapsed2<lapso||OrderOpenTime()==Time[0]){
            actualordersend=actualordersend+1;
            printf("intento replica VENTA por TIEMPO en"+cntopener3+" strategy"+commentID);
          }
@@ -1275,6 +1216,14 @@ printf("SELL:"+Bid+" _comment:"+commentID+" _Time:"+TimeCurrent());
 
 }
 
+
+if(GetLastError()==true){
+  FileDelete(FileDBarchivosSG);
+  FileDelete(FileDBarchivosRG);
+  printf("Se han eliminado los datos recopilados por error "+FileDBarchivosSG);
+  printf("Se han eliminado los datos recopilados por error "+FileDBarchivosRG);
+  printf(GetLastError());
+}
 }//FIN FOR ESTRATEGIAS
 
 //aqui va el codigo
@@ -1331,6 +1280,7 @@ OrderModify(OrderTicket(),OrderOpenPrice(),0,takeprofitmodifyB,0,Blue);
 
 
  if(GetLastError()==true){
+
    printf(GetLastError());
  }
 
